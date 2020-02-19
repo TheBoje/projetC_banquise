@@ -31,12 +31,21 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="banquise.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="banquise.h" />
+		<Unit filename="joueur.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="joueur.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="types.c">
+		<Unit filename="objet.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="objet.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
