@@ -20,13 +20,13 @@ typedef struct // Definition du T_glacon, qui possede une position et une direct
 
 typedef enum // Definition du T_objet, enumere tous les objets presents dans le jeu
 {
-    glacon,
-    resort,
-    marteau_tete,
-    marteau_manche,
-    rocher,
-    piege,
-    vide
+    glacon = 0,
+    resort = 1,
+    marteau_tete = 2,
+    marteau_manche = 3,
+    rocher = 4,
+    piege = 5,
+    vide = 6
 } T_objet;
 
 

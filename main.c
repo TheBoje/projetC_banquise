@@ -6,11 +6,11 @@
 #include "objet.h"
 
 
-void  affiche_banquise (T_case **tab, int n){
-int i,j;
- for(i=0; i<n;i++){
-        for (j=0;j<n;j++){
-          fprintf(stdout, " %d " ,tab[i][j].type_case);
+void  affiche_banquise (T_banquise banquise){
+    int i,j;
+    for(i = 0; i < banquise.taille; i++ ){
+        for (j = 0; j < banquise.taille; j++ ){
+            fprintf(stdout, " %d " ,banquise.tab[i][j].type_case);
         }
         fprintf(stdout,"\n");
     }
@@ -19,9 +19,8 @@ int i,j;
 
 int main()
 {
-    T_case **t = alloue(9);
-    remp_banquise_tab(t,9);
-    affiche_banquise(t,9);
+    T_banquise banquise = create_banquise(9, 1);
+    affiche_banquise(banquise);
 
     return 0;
 }

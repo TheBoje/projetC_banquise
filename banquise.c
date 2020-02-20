@@ -29,7 +29,7 @@ T_case **create_tab(int taille)
     T_case **tab = alloue(taille);
     remp_banquise_tab(tab, taille);
     return tab;
-};
+}
 
 T_banquise create_banquise(int taille, int joueurs)
 {
@@ -38,4 +38,13 @@ T_banquise create_banquise(int taille, int joueurs)
     banquise.taille = taille;
     banquise.nombre_joueur = joueurs;
     return banquise;
+}
+
+
+char T_but_to_char(T_but but) {
+    char result;
+    switch (but) {
+    case 0:
+        result = '';
+    }
 }
