@@ -17,8 +17,7 @@
 typedef enum // Definition du T_type_case, enumere les possibilites d'une case de la banquise
 {
     glace,
-    eau,
-    vide
+    eau
 } T_type_case;
 
 
