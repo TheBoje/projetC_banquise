@@ -81,7 +81,7 @@ void choisir_case_arrive(T_banquise banquise) {
     srand(time(NULL));
     int i = rand()%banquise.taille;
     int j = rand()%banquise.taille;
-    while (banquise.tab[i][j].type_case != glace && banquise.tab[i][j].but != defaut) {
+    while (banquise.tab[i][j].type_case != glace && banquise.tab[i][j].but != depart) {
         i = rand()%banquise.taille;
         j = rand()%banquise.taille;
     }
