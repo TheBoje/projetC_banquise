@@ -50,4 +50,10 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
     int nombre_joueur;
 } T_banquise;
 
+
+void remp_banquise_tab(T_case **tab, int n);
+
+
+T_case **alloue(int n);
+
 #endif // BANQUISE_H_INCLUDED
