@@ -50,8 +50,7 @@ void remp_banquise_tab(T_case **tab, int n);
 
 T_case **alloue(int n);
 
-T_case **create_tab(int taille);
-
-T_banquise create_banquise(int taille, int joueurs);
+void choisir_case_arrive(T_case **tab, int n);
+void choisir_case_depart(T_case **tab, int n);
 
 #endif // BANQUISE_H_INCLUDED
