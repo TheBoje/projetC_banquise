@@ -23,3 +23,34 @@ T_case **alloue(int n)
     }
     return tab;
 }
+void choisir_case_depart(T_case **tab, int n){
+    int a = 0;
+    int i , j ;
+    srand(time(NULL));
+    while (a==0){
+    i = rand()%n;
+    j = rand()%n;
+    if(tab[i][j].type_case == glace && tab[i][j].but!= arrive){
+        tab[i][j].but= depart;
+        a=a+1;
+    }
+
+    }
+}
+
+void choisir_case_arrive(T_case **tab, int n){
+
+  int a = 0;
+    int i , j ;
+    srand(time(NULL));
+    while (a==0){
+    i = rand()%n;
+    j = rand()%n;
+    if(tab[i][j].type_case == glace && tab[i][j].but != depart){
+        tab[i][j].but= arrive;
+        a=a+1;
+    }
+
+    }
+
+}

@@ -56,4 +56,7 @@ void remp_banquise_tab(T_case **tab, int n);
 
 T_case **alloue(int n);
 
+void choisir_case_arrive(T_case **tab, int n);
+void choisir_case_depart(T_case **tab, int n);
+
 #endif // BANQUISE_H_INCLUDED
