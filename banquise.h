@@ -17,8 +17,7 @@
 typedef enum // Definition du T_type_case, enumere les possibilites d'une case de la banquise
 {
     glace,
-    eau,
-    vide
+    eau
 } T_type_case;
 
 
@@ -39,7 +38,6 @@ typedef struct // Definition du T_case, regroupe toutes les proprietes d'une cas
 {
     T_type_case type_case;
     T_but but;
-    T_pos position;
     T_objet objet;
     T_joueur* joueur;
 } T_case;
