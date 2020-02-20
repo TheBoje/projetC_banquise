@@ -23,7 +23,7 @@ typedef enum // Definition du T_type_case, enumere les possibilites d'une case d
 
 typedef enum // Definition du T_but, enumere les differentes cases speciales. C'est a dire la case de depart et la case d'arrivee.
 {
-    depart,
+    depart = 0,
     arrive,
     defaut
 } T_but;
@@ -51,6 +51,7 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
 
 T_case **create_tab(int taille);
 T_banquise create_banquise(int taille, int joueurs);
+char T_but_to_char(T_but objet);
 
 /* Code Ines */
 

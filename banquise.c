@@ -21,6 +21,27 @@ T_banquise create_banquise(int taille, int joueurs)
     return banquise;
 }
 
+char T_but_to_char(T_but objet)
+{
+    char result;
+    switch (objet)
+    {
+        case 0: // Depart
+            result = 'D';
+            break;
+        case 1: // Arrivee
+            result = 'A';
+            break;
+        case 2: // Defaut (ne rien afficher dans ce cas)
+            result = '0';
+            break;
+        default:
+            result = '0';
+            break;
+    }
+    return result;
+}
+
 /* Code Ines */
 
 T_case **alloue(int n)
