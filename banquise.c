@@ -18,6 +18,7 @@ T_banquise create_banquise(int taille, int joueurs)
     banquise.tab = create_tab(taille);
     banquise.taille = taille;
     banquise.nombre_joueur = joueurs;
+    choisir_case_depart(banquise);
     return banquise;
 }
 
@@ -65,25 +66,25 @@ void remp_banquise_tab(T_case **tab, int taille){
     }
 }
 
-void choisir_case_depart(T_case **tab, int n) {
+void choisir_case_depart(T_banquise banquise) {
     srand(time(NULL));
-    int i = rand()%n;
-    int j = rand()%n;
-    while (tab[i][j].type_case != glace) {
-        i = rand()%n;
-        j = rand()%n;
+    int i = rand()%banquise.taille;
+    int j = rand()%banquise.taille;
+    while (banquise.tab[i][j].type_case != glace) {
+        i = rand()%banquise.taille;
+        j = rand()%banquise.taille;
     }
-    tab[i][j].but = depart;
+    banquise.tab[i][j].but = depart;
 }
 
-void choisir_case_arrive(T_case **tab, int n) {
+void choisir_case_arrive(T_banquise banquise) {
     srand(time(NULL));
-    int i = rand()%n;
-    int j = rand()%n;
-    while (tab[i][j].type_case != glace && tab[i][j].but != defaut) {
-        i = rand()%n;
-        j = rand()%n;
+    int i = rand()%banquise.taille;
+    int j = rand()%banquise.taille;
+    while (banquise.tab[i][j].type_case != glace && banquise.tab[i][j].but != defaut) {
+        i = rand()%banquise.taille;
+        j = rand()%banquise.taille;
     }
-    tab[i][j].but = arrive;
+    banquise.tab[i][j].but = arrive;
 }
 
