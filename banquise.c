@@ -59,7 +59,7 @@ void choisir_case_arrive(T_case **tab, int n) {
     srand(time(NULL));
     int i = rand()%n;
     int j = rand()%n;
-    while (tab[i][j].type_case != glace && tab[i][j].but != defaut) {
+    while (tab[i][j].type_case != glace && tab[i][j].but != depart) {
         i = rand()%n;
         j = rand()%n;
     }
