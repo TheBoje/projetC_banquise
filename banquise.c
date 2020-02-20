@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "banquise.h"
 #include <time.h>
+#include "banquise.h"
 
-void remp_banquise_tab(T_case **tab, int n){
-   int i,j;
-   srand(time(NULL));
-    for(i=0; i<n;i++){
-        for (j=0;j<n;j++){
-       tab[i][j].type_case = rand()%2;
+void remp_banquise_tab(T_case **tab, int taille){
+    int i,j;
+    srand(time(NULL));
+    for(i = 0 ; i < taille ; i++ ){
+        for (j = 0 ; j < taille ; j++ ){
+            tab[i][j].type_case = rand()%2;
         }
     }
 }
@@ -23,34 +23,19 @@ T_case **alloue(int n)
     }
     return tab;
 }
-void choisir_case_depart(T_case **tab, int n){
-    int a = 0;
-    int i , j ;
-    srand(time(NULL));
-    while (a==0){
-    i = rand()%n;
-    j = rand()%n;
-    if(tab[i][j].type_case == glace && tab[i][j].but!= arrive){
-        tab[i][j].but= depart;
-        a=a+1;
-    }
 
-    }
-}
+T_case **create_tab(int taille)
+{
+    T_case **tab = alloue(taille);
+    remp_banquise_tab(tab, taille);
+    return tab;
+};
 
-void choisir_case_arrive(T_case **tab, int n){
-
-  int a = 0;
-    int i , j ;
-    srand(time(NULL));
-    while (a==0){
-    i = rand()%n;
-    j = rand()%n;
-    if(tab[i][j].type_case == glace && tab[i][j].but != depart){
-        tab[i][j].but= arrive;
-        a=a+1;
-    }
-
-    }
-
+T_banquise create_banquise(int taille, int joueurs)
+{
+    T_banquise banquise;
+    banquise.tab = create_tab(taille);
+    banquise.taille = taille;
+    banquise.nombre_joueur = joueurs;
+    return banquise;
 }

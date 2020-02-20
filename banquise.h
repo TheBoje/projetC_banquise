@@ -28,11 +28,6 @@ typedef enum // Definition du T_but, enumere les differentes cases speciales. C'
     defaut
 } T_but;
 
-typedef struct {
-    int tailleX;
-    int tailleY;
-} T_taille;
-
 
 typedef struct // Definition du T_case, regroupe toutes les proprietes d'une case.
 {
@@ -46,13 +41,12 @@ typedef struct // Definition du T_case, regroupe toutes les proprietes d'une cas
 typedef struct // Definition du T_banquise, contient la matrice de cases, la taille de la matrice et le nombre de joueur
 {
     T_case **tab;
-    T_taille taille;
+    int taille;
     int nombre_joueur;
 } T_banquise;
 
 
 void remp_banquise_tab(T_case **tab, int n);
-
 
 T_case **alloue(int n);
 
