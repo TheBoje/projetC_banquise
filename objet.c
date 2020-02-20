@@ -25,10 +25,10 @@ char  T_objet_to_char(T_objet objet) {
         result = 'P';
         break;
     case 6: // Vide
-        result = '0';
+        result = ' ';
         break;
     default:
-        result = '0';
+        result = ' ';
         break;
     }
     return result;

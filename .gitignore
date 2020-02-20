@@ -1,2 +1,6 @@
 /*.layout
- 
+/.idea
+/obj/
+/bin/
+/cmake-build-debug/
+/CMakeLists.txt

@@ -6,7 +6,7 @@
 /* ---------- Types Joueur ---------- */
 /*
     Definition des differents types pour le joueur
-    - T_couleur (enumere)
+    - T_couleur (enum)
     - T_pos (int posx, int posy)
     - T_vec (int dx, int dy)
     - T_score (int distance, int nb_glacon, int nb_victime)
