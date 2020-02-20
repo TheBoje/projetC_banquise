@@ -54,4 +54,8 @@ typedef struct // Definition du T_joueur, regroupe les caracteristiques du joueu
     T_score score;
 } T_joueur;
 
+/* Code Louis */
+
+/* Code Ines */
+
 #endif // JOUEUR_H_INCLUDED

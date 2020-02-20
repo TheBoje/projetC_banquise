@@ -5,6 +5,9 @@
 #include "joueur.h"
 #include "objet.h"
 
+/* Code Louis */
+
+/* Code Ines */
 
 void  affiche_banquise (T_banquise banquise){
     int i,j;
@@ -19,8 +22,12 @@ void  affiche_banquise (T_banquise banquise){
 
 int main()
 {
+    /* Code Louis */
+
     T_banquise banquise = create_banquise(9, 1);
     affiche_banquise(banquise);
+
+    /* Code Ines */
 
     return 0;
 }

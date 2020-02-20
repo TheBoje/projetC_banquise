@@ -46,8 +46,15 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
 } T_banquise;
 
 
-void remp_banquise_tab(T_case **tab, int n);
 
+/* Code Louis */
+
+T_case **create_tab(int taille);
+T_banquise create_banquise(int taille, int joueurs);
+
+/* Code Ines */
+
+void remp_banquise_tab(T_case **tab, int n);
 T_case **alloue(int n);
 
 void choisir_case_arrive(T_case **tab, int n);

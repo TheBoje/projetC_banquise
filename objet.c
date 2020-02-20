@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "objet.h"
+/* Code Louis */
 
 char  T_objet_to_char(T_objet objet) {
     char result;
@@ -32,4 +33,6 @@ char  T_objet_to_char(T_objet objet) {
     }
     return result;
 }
+
+/* Code Ines */
 

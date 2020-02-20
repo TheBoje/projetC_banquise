@@ -30,4 +30,11 @@ typedef enum // Definition du T_objet, enumere tous les objets presents dans le 
 } T_objet;
 
 
+/* Code Louis */
+
+char  T_objet_to_char(T_objet objet);
+
+/* Code Ines */
+
+
 #endif // OBJET_H_INCLUDED
