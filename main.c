@@ -6,8 +6,6 @@
 #include "objet.h"
 
 
-
-
 void  affiche_banquise (T_case **tab, int n){
 int i,j;
  for(i=0; i<n;i++){

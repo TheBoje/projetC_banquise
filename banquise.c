@@ -23,3 +23,13 @@ T_case **alloue(int n)
     }
     return tab;
 }
+
+// a faire : T_case create_tab(int taille){}; retourne le tab final
+
+T_banquise create_banquise(int taille, int joueurs) {
+    T_banquise banquise;
+    banquise.tab = create_tab(taille);
+    banquise.taille = taille;
+    banquise.nombre_joueur = joueurs;
+    return T_banquise;
+}
