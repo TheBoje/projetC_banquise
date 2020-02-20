@@ -4,7 +4,7 @@
 #include"objet.h"
 
 /* ---------- Types Banquise ---------- */
-/*
+/* TODO mettre à jour
     Definition des differents objets :
     - T_type_case (enumere)
     - T_but (enumere)
@@ -23,7 +23,7 @@ typedef enum // Definition du T_type_case, enumere les possibilites d'une case d
 
 typedef enum // Definition du T_but, enumere les differentes cases speciales. C'est a dire la case de depart et la case d'arrivee.
 {
-    depart,
+    depart = 0,
     arrive,
     defaut
 } T_but;
@@ -51,13 +51,14 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
 
 T_case **create_tab(int taille);
 T_banquise create_banquise(int taille, int joueurs);
+char T_but_to_char(T_but objet);
 
 /* Code Ines */
 
 void remp_banquise_tab(T_case **tab, int n);
 T_case **alloue(int n);
 
-void choisir_case_arrive(T_case **tab, int n);
-void choisir_case_depart(T_case **tab, int n);
+void choisir_case_arrive(T_banquise banquise);
+void choisir_case_depart(T_banquise banquise);
 
 #endif // BANQUISE_H_INCLUDED
