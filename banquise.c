@@ -8,13 +8,12 @@
 
 
 /* Code Louis */
-void init_random(){
+void init_random() {
     int seed = time(NULL);
     srand(seed);
 }
 
-T_case **create_tab(int taille)
-{
+T_case **create_tab(int taille) {
     T_case **tab = alloue(taille);
     remp_banquise_tab(tab, taille);
     choisir_case_depart(tab, taille);
@@ -22,8 +21,7 @@ T_case **create_tab(int taille)
     return tab;
 }
 
-T_banquise create_banquise(int taille, int joueurs)
-{
+T_banquise create_banquise(int taille, int joueurs) {
     init_random();
     T_banquise banquise;
     banquise.tab = create_tab(taille);
@@ -32,20 +30,18 @@ T_banquise create_banquise(int taille, int joueurs)
     return banquise;
 }
 
-void modif_type_case(T_banquise banquise, int x, int y,T_type_case type_case){
+void modif_type_case(T_banquise banquise, int x, int y, T_type_case type_case) {
     banquise.tab[x][y].type_case = type_case;
 }
 
-void modif_pos_joueur(T_banquise banquise, T_joueur joueur){
+void modif_pos_joueur(T_banquise banquise, T_joueur joueur) {
     banquise.tab[joueur.position.posx][joueur.position.posy].joueur = NULL;
     banquise.tab[joueur.position.posx + joueur.vecteur.dx][joueur.position.posy + joueur.vecteur.dy].joueur = &joueur;
 }
 
-char T_but_to_char(T_but objet)
-{
+char T_but_to_char(T_but objet) {
     char result;
-    switch (objet)
-    {
+    switch (objet) {
         case 0: // Depart
             result = 'D';
             break;
@@ -59,10 +55,9 @@ char T_but_to_char(T_but objet)
     return result;
 }
 
-char T_case_to_char(T_type_case c){
+char T_case_to_char(T_type_case c) {
     char result;
-    switch (c)
-    {
+    switch (c) {
         case 0:
             result = ' ';
             break;
@@ -79,37 +74,35 @@ char T_case_to_char(T_type_case c){
 
 /* Code Ines */
 
-T_case **alloue(int n)
-{
+T_case **alloue(int n) {
     int h;
-    T_case ** tab =(T_case**) malloc(n*sizeof(T_case*));
-    for (h = 0 ; h < n ; h++)
-    {
-        tab[h] = (T_case*)malloc(n * sizeof(T_case));
+    T_case **tab = (T_case **) malloc(n * sizeof(T_case *));
+    for (h = 0; h < n; h++) {
+        tab[h] = (T_case *) malloc(n * sizeof(T_case));
     }
     return tab;
 }
 
-void remp_banquise_tab_aux(T_case **tab,int taille,int x,int y){
-    for (int i = x - 1; i <= x + 1 ; i++){
-        for (int j = y - 1; j <= y + 1; j++){
-            if (i < taille && i >= 0 && j < taille && j >= 0){
+void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
+    for (int i = x - 1; i <= x + 1; i++) {
+        for (int j = y - 1; j <= y + 1; j++) {
+            if (i < taille && i >= 0 && j < taille && j >= 0) {
                 tab[i][j].type_case = eau;
             }
         }
     }
 }
 
-void remp_banquise_tab(T_case **tab, int taille){
-    int i,j,x,y,r;
-    r = rand()%(2 * taille) + taille;
-    for (int k = 0; k < r; k++){
-        x = rand()%taille;
-        y = rand()%taille;
+void remp_banquise_tab(T_case **tab, int taille) {
+    int i, j, x, y, r;
+    r = rand() % (2 * taille) + taille;
+    for (int k = 0; k < r; k++) {
+        x = rand() % taille;
+        y = rand() % taille;
         remp_banquise_tab_aux(tab, taille, x, y);
     }
-    for(i = 0 ; i < taille ; i++ ){
-        for (j = 0 ; j < taille ; j++ ){
+    for (i = 0; i < taille; i++) {
+        for (j = 0; j < taille; j++) {
             tab[i][j].but = defaut;
             tab[i][j].objet = vide;
         }
@@ -118,14 +111,11 @@ void remp_banquise_tab(T_case **tab, int taille){
 
 void choisir_case_depart(T_case **tab, int taille) {
     int i, j;
-    i = rand()%taille;
-    j = rand()%taille;
-    if (tab[i][j].type_case == glace)
-    {
+    i = rand() % taille;
+    j = rand() % taille;
+    if (tab[i][j].type_case == glace) {
         choisir_case_depart(tab, taille);
-    }
-    else
-    {
+    } else {
         tab[i][j].but = depart;
 
     }
@@ -135,12 +125,9 @@ void choisir_case_arrive(T_case **tab, int taille) {
     int i, j;
     i = rand() % taille;
     j = rand() % taille;
-    if (tab[i][j].type_case == glace || tab[i][j].but == depart)
-    {
+    if (tab[i][j].type_case == glace || tab[i][j].but == depart) {
         choisir_case_arrive(tab, taille);
-    }
-    else
-    {
+    } else {
         tab[i][j].but = arrive;
     }
 }

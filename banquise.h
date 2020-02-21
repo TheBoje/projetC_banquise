@@ -34,7 +34,7 @@ typedef struct // Definition du T_case, regroupe toutes les proprietes d'une cas
     T_type_case type_case;
     T_but but;
     T_objet objet;
-    T_joueur* joueur;
+    T_joueur *joueur;
     T_vec vecteur;
 } T_case;
 
@@ -49,21 +49,30 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
 /* ---------- Fonctions Banquise ---------- */
 
 /* Code Louis */
+void init_random();
 
-void remp_banquise_tab_aux(T_case **tab,int taille,int x,int y);
+void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y);
+
 T_case **create_tab(int taille);
+
 T_banquise create_banquise(int taille, int joueurs);
-void modif_type_case(T_banquise banquise, int x, int y,T_type_case type_case);
+
+void modif_type_case(T_banquise banquise, int x, int y, T_type_case type_case);
+
 void modif_pos_joueur(T_banquise banquise, T_joueur joueur);
+
 char T_but_to_char(T_but objet);
+
 char T_case_to_char(T_type_case c);
 
 /* Code Ines */
 
 void remp_banquise_tab(T_case **tab, int n);
+
 T_case **alloue(int n);
 
 void choisir_case_arrive(T_case **tab, int taille);
+
 void choisir_case_depart(T_case **tab, int taille);
 
 
