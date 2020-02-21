@@ -8,6 +8,10 @@
 
 
 /* Code Louis */
+void init_random(){
+    int seed = time(NULL);
+    srand(seed);
+}
 
 T_case **create_tab(int taille)
 {
@@ -20,6 +24,7 @@ T_case **create_tab(int taille)
 
 T_banquise create_banquise(int taille, int joueurs)
 {
+    init_random();
     T_banquise banquise;
     banquise.tab = create_tab(taille);
     banquise.taille = taille;
@@ -97,10 +102,6 @@ void remp_banquise_tab_aux(T_case **tab,int taille,int x,int y){
 
 void remp_banquise_tab(T_case **tab, int taille){
     int i,j,x,y,r;
-    struct timeval now;
-    gettimeofday(&now, NULL);
-    srand((unsigned long int) &now + 1);
-    printf("seed : %ld\n", (unsigned long int)&now); //4294953760
     r = rand()%(2 * taille) + taille;
     for (int k = 0; k < r; k++){
         x = rand()%taille;
@@ -116,9 +117,6 @@ void remp_banquise_tab(T_case **tab, int taille){
 }
 
 void choisir_case_depart(T_case **tab, int taille) {
-    FILETIME  now; // Problemes de génération de nombres pseudos-aléatoires pour le placement des cases (seed actualisée toutes les secondes seulement), donc utilisation de l'heure systeme en microsecondes
-    GetSystemTimeAsFileTime(&now);
-    srand((unsigned long)&now);
     int i, j;
     i = rand()%taille;
     j = rand()%taille;
@@ -134,9 +132,6 @@ void choisir_case_depart(T_case **tab, int taille) {
 }
 
 void choisir_case_arrive(T_case **tab, int taille) {
-    FILETIME  now;
-    GetSystemTimeAsFileTime(&now);
-    srand((unsigned long)&now);
     int i, j;
     i = rand() % taille;
     j = rand() % taille;
