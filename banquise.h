@@ -66,4 +66,5 @@ T_case **alloue(int n);
 void choisir_case_arrive(T_case **tab, int taille);
 void choisir_case_depart(T_case **tab, int taille);
 
+
 #endif // BANQUISE_H_INCLUDED

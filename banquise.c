@@ -4,6 +4,7 @@
 #include "windows.h"
 #include "banquise.h"
 
+
 /* Code Louis */
 
 T_case **create_tab(int taille)
@@ -123,6 +124,7 @@ void choisir_case_depart(T_case **tab, int taille) {
     else
     {
         tab[i][j].but = depart;
+
     }
 }
 
@@ -142,4 +144,5 @@ void choisir_case_arrive(T_case **tab, int taille) {
         tab[i][j].but = arrive;
     }
 }
+
 
