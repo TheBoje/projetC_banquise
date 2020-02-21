@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
+#include <sys/time.h>
 #include "windows.h"
 #include "banquise.h"
 
@@ -94,7 +96,10 @@ void remp_banquise_tab_aux(T_case **tab,int taille,int x,int y){
 
 void remp_banquise_tab(T_case **tab, int taille){
     int i,j,x,y,r;
-    srand(clock());
+    struct timeval now;
+    gettimeofday(&now, NULL);
+    srand((unsigned long int) &now + 1);
+    printf("seed : %ld\n", (unsigned long int)&now); //4294953760
     r = rand()%(2 * taille) + taille;
     for (int k = 0; k < r; k++){
         x = rand()%taille;
@@ -114,8 +119,8 @@ void choisir_case_depart(T_case **tab, int taille) {
     GetSystemTimeAsFileTime(&now);
     srand((unsigned long)&now);
     int i, j;
-    i = rand() % taille;
-    j = rand() % taille;
+    i = rand()%taille;
+    j = rand()%taille;
     if (tab[i][j].type_case == glace)
     {
         choisir_case_depart(tab, taille);

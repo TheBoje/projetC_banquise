@@ -12,7 +12,7 @@ void  affiche_banquise (T_banquise banquise){
     for(i = 0; i < banquise.taille; i++ ){
         for (j = 0; j < banquise.taille; j++ ){
             if (banquise.tab[i][j].joueur != NULL){
-                fprintf(stdout, " %c " , 'J');
+                fprintf(stdout, " %c " , 'X');
             }
             else if (banquise.tab[i][j].but != defaut)
             {
