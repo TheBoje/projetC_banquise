@@ -21,7 +21,6 @@ void affiche_banquise(T_banquise banquise) {
             } else {
                 fprintf(stdout, " %c ", T_case_to_char(banquise.tab[i][j].type_case));
             }
-
         }
         fprintf(stdout, "\n");
     }
@@ -33,6 +32,7 @@ int main() {
 
     T_banquise banquise = create_banquise(20, 1);
     affiche_banquise(banquise);
+    printf("Chemin : %d\n", chemin_existe(banquise, position_depart(banquise)));
 
     /* Code Ines */
 

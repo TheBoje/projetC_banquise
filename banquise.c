@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <w32api/minmax.h>
 #include "banquise.h"
 
 
@@ -41,15 +42,50 @@ T_pos position_arrive (T_banquise banquise){
     result.posx = 0;
     result.posy = 0;
     for (int i = 0; i < banquise.taille ; i++) {
-        for (int j = 0; j < banquise.taille ; i++) {
-            if ( banquise.tab[i][j].but == arrive) {
+        for (int j = 0; j < banquise.taille ; j++) {
+            if (banquise.tab[i][j].but == arrive) {
                 result.posx = i;
                 result.posy = j;
-                break;
             }
         }
     }
     return result;
+}
+
+T_pos position_depart(T_banquise banquise){
+    T_pos result;
+    result.posx = 0;
+    result.posy = 0;
+    for (int i = 0; i < banquise.taille ; i++) {
+        for (int j = 0; j < banquise.taille ; j++) {
+            if (banquise.tab[i][j].but == depart) {
+                result.posx = i;
+                result.posy = j;
+            }
+        }
+    }
+    return result;
+}
+
+T_pos offset_pos(T_pos pos, int offx, int offy){
+    pos.posx += offx;
+    pos.posy += offy;
+    return pos;
+}
+
+int is_in_banquise(T_banquise banquise, T_pos pos){
+    if ((pos.posx < 0)
+        || (pos.posy < 0)
+        || (pos.posx >= banquise.taille)
+        || (pos.posy >= banquise.taille)
+        )
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
 int **create_tab_chemin(int taille) {
@@ -62,55 +98,51 @@ int **create_tab_chemin(int taille) {
             tab[i][j] = 0;
         }
     }
+    return tab;
 }
 
-int **init_chemin_existe(T_banquise banquise, T_pos pos, int taille) {
+int chemin_existe(T_banquise banquise, T_pos pos) {
     int **search = create_tab_chemin(banquise.taille);
+    T_pos pos_arrive = position_arrive(banquise);
+    return chemin_exist_aux(banquise, pos, pos_arrive, search);
 }
-int chemin_existe(T_banquise banquise, T_pos pos, int **search) {
-    T_pos arrive = position_arrive(banquise);
-    if (search[arrive.posx][arrive.posy] == 1){ // Dans tab, inconnu = 0, atteignable = 1, limite = 2.
+
+int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search){
+    if (is_in_banquise(banquise, pos) == 0 || search[pos.posx][pos.posy] == 1)
+    {
+        return 0;
+    }
+    else if (banquise.tab[pos.posx][pos.posy].but == arrive){
+        search[pos.posx][pos.posy] = 1;
         return 1;
     }
     else {
-        for (int i = 0; i <= 3; i++){
-            int offx = 0, offy = 0;
-            switch (i){
-                case 0:
-                    offx = 1;
-                    offy = 0;
-                    break;
-                case 1:
-                    offx = 0;
-                    offy = 1;
-                    break;
-                case 2:
-                    offx = -1;
-                    offy = 0;
-                    break;
-                case 3:
-                    offx = 0;
-                    offy = -1;
-                    break;
-                default:
-                    break;
-            }
-            T_pos temp_pos = pos;
-            temp_pos.posx = temp_pos.posx + offx;
-            temp_pos.posy = temp_pos.posx + offy;
-            if (search[temp_pos.posx][temp_pos.posy] == 0) {
-                if (banquise.tab[temp_pos.posx][temp_pos.posx].type_case == glace
-                 && banquise.tab[temp_pos.posx][temp_pos.posx].objet == vide)
-                {
-                    search[temp_pos.posx][temp_pos.posx] = 1;
-                    chemin_existe(banquise, temp_pos, search);
-                }
-                else {
-                    search[temp_pos.posx][temp_pos.posx] = 2;
-                }
-            }
+        int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
+        /* Todo vérifier que pos + offset appartient à banquise.taille sinon crash
+            Fonction int result_search(search, pos, offset) qui regarde pos + offset ?*/
+        if (search[pos.posx + 1][pos.posy] == 0){
+            r1 = chemin_exist_aux(banquise, offset_pos(pos,  1, 0), pos_arrive, search);
         }
-    }
+        if (search[pos.posx - 1][pos.posy] == 0) {
+            r2 = chemin_exist_aux(banquise, offset_pos(pos, -1, 0), pos_arrive, search);
+        }
+        if (search[pos.posx][pos.posy + 1] == 0) {
+            r3 = chemin_exist_aux(banquise, offset_pos(pos, 0,  1), pos_arrive, search);
+        }
+        if (search[pos.posx][pos.posy - 1] == 0) {
+            r4 = chemin_exist_aux(banquise, offset_pos(pos, 0, -1), pos_arrive, search);
+        }
+
+        if (r1 || r2 || r3 || r4)
+        {
+            return 1;
+        }
+        else
+        {
+            search[pos.posx][pos.posy] = 1;
+            return 0;
+        }
+        }
 }
 
 char T_but_to_char(T_but objet) {

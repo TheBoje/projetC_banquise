@@ -50,27 +50,19 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
 
 /* Code Louis */
 void init_random();
-
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y);
-
 T_case **create_tab(int taille);
-
 T_banquise create_banquise(int taille, int joueurs);
-
 void modif_type_case(T_banquise banquise, int x, int y, T_type_case type_case);
-
 void modif_pos_joueur(T_banquise banquise, T_joueur joueur);
-
 T_pos position_arrive (T_banquise banquise);
-
+T_pos position_depart (T_banquise banquise);
+T_pos offset_pos(T_pos pos, int offx, int offy);
+int is_in_banquise(T_banquise banquise, T_pos pos);
 int **create_tab_chemin(int taille);
-
-int **init_chemin_existe(T_banquise banquise, T_pos pos, int taille);
-
-int chemin_existe(T_banquise banquise, T_pos pos, int **search);
-
+int chemin_existe(T_banquise banquise, T_pos pos);
+int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search);
 char T_but_to_char(T_but objet);
-
 char T_case_to_char(T_type_case c);
 
 /* Code Ines */
