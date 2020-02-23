@@ -16,8 +16,8 @@
 
 typedef enum // Definition du T_type_case, enumere les possibilites d'une case de la banquise
 {
-    glace = 0,
-    eau = 1
+    eau = 0,
+    glace = 1
 } T_type_case;
 
 
@@ -53,14 +53,13 @@ void init_random();
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y);
 T_case **create_tab(int taille);
 T_banquise create_banquise(int taille, int joueurs);
-void modif_type_case(T_banquise banquise, int x, int y, T_type_case type_case);
-void modif_pos_joueur(T_banquise banquise, T_joueur joueur);
 T_pos position_arrive (T_banquise banquise);
 T_pos position_depart (T_banquise banquise);
 T_pos offset_pos(T_pos pos, int offx, int offy);
 int is_in_banquise(T_banquise banquise, T_pos pos);
 void print_search(int **search, T_banquise banquise);
 int **create_tab_chemin(int taille);
+int**tab_chemin_fill_eau(T_banquise banquise, int **search);
 int chemin_exist(T_banquise banquise, T_pos pos);
 int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search);
 char T_but_to_char(T_but objet);

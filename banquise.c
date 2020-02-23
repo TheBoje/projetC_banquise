@@ -27,14 +27,6 @@ T_banquise create_banquise(int taille, int joueurs) {
     return banquise;
 }
 
-void modif_type_case(T_banquise banquise, int x, int y, T_type_case type_case) {
-    banquise.tab[x][y].type_case = type_case;
-}
-
-void modif_pos_joueur(T_banquise banquise, T_joueur joueur) {
-    banquise.tab[joueur.position.posx][joueur.position.posy].joueur = NULL;
-    banquise.tab[joueur.position.posx + joueur.vecteur.dx][joueur.position.posy + joueur.vecteur.dy].joueur = &joueur;
-}
 
 T_pos position_arrive (T_banquise banquise){
     T_pos result;
@@ -111,8 +103,19 @@ int **create_tab_chemin(int taille) {
     return tab;
 }
 
+int **tab_chemin_fill_eau(T_banquise banquise, int **search){
+    for (int i = 0; i < banquise.taille; i++){
+        for (int j = 0; j < banquise.taille; j++){
+            if(banquise.tab[i][j].type_case == eau){
+                search[i][j] = 2;
+            }
+        }
+    }
+    return search;
+}
+
 int chemin_exist(T_banquise banquise, T_pos pos) {
-    int **search = create_tab_chemin(banquise.taille);
+    int **search = tab_chemin_fill_eau(banquise, create_tab_chemin(banquise.taille));
     T_pos pos_arrive = position_arrive(banquise);
     return chemin_exist_aux(banquise, pos, pos_arrive, search);
 }
@@ -157,6 +160,9 @@ int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **sea
         if (search[pos.posx][pos.posy] == 3) {
             return 1;
         }
+        else if (search[pos.posx][pos.posy] == 2){
+            return 0;
+        }
         else {
             return 0;
         }
@@ -187,7 +193,7 @@ char T_case_to_char(T_type_case c) {
             result = ' ';
             break;
         case 1:
-            result = '1';
+            result = '*';
             break;
         default:
             result = ' ';
@@ -212,7 +218,7 @@ void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
     for (int i = x - 1; i <= x + 1; i++) {
         for (int j = y - 1; j <= y + 1; j++) {
             if (i < taille && i >= 0 && j < taille && j >= 0) {
-                tab[i][j].type_case = eau;
+                tab[i][j].type_case = glace;
             }
         }
     }
@@ -220,7 +226,7 @@ void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
 
 void remp_banquise_tab(T_case **tab, int taille) {
     int i, j, x, y, r;
-    r = rand() % (2 * taille) + taille;
+    r = (rand() % (taille)) + taille;
     for (int k = 0; k < r; k++) {
         x = rand() % taille;
         y = rand() % taille;
@@ -253,7 +259,7 @@ void choisir_case_arrive(T_case **tab, int taille) {
         i = rand() % taille;
         j = rand() % taille;
     }
-        tab[i][j].but = arrive;
+    tab[i][j].but = arrive;
 }
 
 

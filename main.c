@@ -29,7 +29,7 @@ void affiche_banquise(T_banquise banquise) {
 
 int main() {
     /* Code Louis */
-    T_banquise banquise = create_banquise(8, 1);
+    T_banquise banquise = create_banquise(20, 1);
     affiche_banquise(banquise);
     printf("Chemin : %d\n", chemin_exist(banquise, position_depart(banquise)));
 
