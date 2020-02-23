@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <w32api/minmax.h>
 #include "banquise.h"
 
 
@@ -88,6 +87,17 @@ int is_in_banquise(T_banquise banquise, T_pos pos){
     }
 }
 
+void print_search(int **search, T_banquise banquise) {
+    printf("------------------ SEARCH COMMENCE ------------------\n");
+    for (int i = 0; i < banquise.taille; i++){
+        for (int j = 0; j < banquise.taille; j++) {
+            printf(" %d ", search[i][j]);
+        }
+        printf("\n");
+    }
+    printf("------------------ SEARCH TERMINEE ------------------\n");
+}
+
 int **create_tab_chemin(int taille) {
     int **tab = (int **) malloc(taille * sizeof(int *));
     for (int i = 0; i < taille; i++) {
@@ -101,49 +111,58 @@ int **create_tab_chemin(int taille) {
     return tab;
 }
 
-int chemin_existe(T_banquise banquise, T_pos pos) {
+int chemin_exist(T_banquise banquise, T_pos pos) {
     int **search = create_tab_chemin(banquise.taille);
     T_pos pos_arrive = position_arrive(banquise);
     return chemin_exist_aux(banquise, pos, pos_arrive, search);
 }
 
-int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search){
-    if (is_in_banquise(banquise, pos) == 0 || search[pos.posx][pos.posy] == 1)
-    {
-        return 0;
-    }
-    else if (banquise.tab[pos.posx][pos.posy].but == arrive){
-        search[pos.posx][pos.posy] = 1;
-        return 1;
-    }
-    else {
-        int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
-        /* Todo vérifier que pos + offset appartient à banquise.taille sinon crash
-            Fonction int result_search(search, pos, offset) qui regarde pos + offset ?*/
-        if (search[pos.posx + 1][pos.posy] == 0){
-            r1 = chemin_exist_aux(banquise, offset_pos(pos,  1, 0), pos_arrive, search);
-        }
-        if (search[pos.posx - 1][pos.posy] == 0) {
-            r2 = chemin_exist_aux(banquise, offset_pos(pos, -1, 0), pos_arrive, search);
-        }
-        if (search[pos.posx][pos.posy + 1] == 0) {
-            r3 = chemin_exist_aux(banquise, offset_pos(pos, 0,  1), pos_arrive, search);
-        }
-        if (search[pos.posx][pos.posy - 1] == 0) {
-            r4 = chemin_exist_aux(banquise, offset_pos(pos, 0, -1), pos_arrive, search);
-        }
-
-        if (r1 || r2 || r3 || r4)
+int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search) {
+    if (search[pos.posx][pos.posy] == 0) {
+        if (banquise.tab[pos.posx][pos.posy].type_case == eau)
         {
-            return 1;
-        }
-        else
-        {
-            search[pos.posx][pos.posy] = 1;
+            search[pos.posx][pos.posy] = 2;
             return 0;
         }
+        else {
+            if (pos.posx == pos_arrive.posx && pos.posy == pos_arrive.posy)
+            {
+                search[pos.posx][pos.posy] = 3;
+                return 1;
+            } else {
+                search[pos.posx][pos.posy] = 1;
+                int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
+                //print_search(search, banquise);
+                if (is_in_banquise(banquise, offset_pos(pos, 1, 0))) {
+                    r1 = chemin_exist_aux(banquise, offset_pos(pos, 1, 0), pos_arrive, search);
+                }
+                if (is_in_banquise(banquise, offset_pos(pos, -1, 0))) {
+                    r2 = chemin_exist_aux(banquise, offset_pos(pos, -1, 0), pos_arrive, search);
+                }
+                if (is_in_banquise(banquise, offset_pos(pos, 0, 1))) {
+                    r3 = chemin_exist_aux(banquise, offset_pos(pos, 0, 1), pos_arrive, search);
+                }
+                if (is_in_banquise(banquise, offset_pos(pos, 0, -1))) {
+                    r4 = chemin_exist_aux(banquise, offset_pos(pos, 0, -1), pos_arrive, search);
+                }
+                if (r1 == 1 || r2 == 1 || r3 == 1 || r4 == 1) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
         }
+    } else
+    {
+        if (search[pos.posx][pos.posy] == 3) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
 }
+
 
 char T_but_to_char(T_but objet) {
     char result;
@@ -219,23 +238,22 @@ void choisir_case_depart(T_case **tab, int taille) {
     int i, j;
     i = rand() % taille;
     j = rand() % taille;
-    if (tab[i][j].type_case == glace) {
-        choisir_case_depart(tab, taille);
-    } else {
-        tab[i][j].but = depart;
-
+    while (tab[i][j].type_case == eau) {
+        i = rand() % taille;
+        j = rand() % taille;
     }
+    tab[i][j].but = depart;
 }
 
 void choisir_case_arrive(T_case **tab, int taille) {
     int i, j;
     i = rand() % taille;
     j = rand() % taille;
-    if (tab[i][j].type_case == glace || tab[i][j].but == depart) {
-        choisir_case_arrive(tab, taille);
-    } else {
-        tab[i][j].but = arrive;
+    while (tab[i][j].type_case == eau) {
+        i = rand() % taille;
+        j = rand() % taille;
     }
+        tab[i][j].but = arrive;
 }
 
 
