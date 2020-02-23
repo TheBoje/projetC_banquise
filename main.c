@@ -1,12 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <windows.h>
 #include "banquise.h"
 
-
-/* Code Louis */
-
-/* Code Ines */
 
 void affiche_banquise(T_banquise banquise) {
     int i, j;
@@ -26,11 +22,56 @@ void affiche_banquise(T_banquise banquise) {
     }
 }
 
+int init_jeu_joueurs(){
+    printf("Jeu de la banquise\n"
+           "\n"
+           "Nombre de joueurs : 1 à 4\n"
+           "\n"
+           "Entrez le nombre de joueurs\n");
+    int c;
+    c = getchar();
+    printf("%d", c);
+    if (c >= 1 && c <= 4){
+        return c;
+    }
+    else {
+        system("@cls||clear");
+        return init_jeu_joueurs();
+    }
+}
+
+int init_jeu_aux(){
+    printf("Jeu de la Banquise\n"
+           "\n"
+           "Créé par Louis Leenart et Ines Mesmi\n"
+           "\n"
+           "Appuyez sur \"enter\" pour continuer\n"
+    );
+    int c;
+    c = getchar();
+    printf("%d", c);
+    if(c == 10){
+        system("@cls||clear");
+        return init_jeu_joueurs();
+    }
+    else {
+        system("@cls||clear");
+        return init_jeu_aux();
+    }
+}
+
+
+T_banquise init_jeu() {
+    init_jeu_aux();
+    T_banquise banquise = create_banquise(20, 1);
+    affiche_banquise(banquise);
+    return banquise;
+}
+
 
 int main() {
     /* Code Louis */
-    T_banquise banquise = create_banquise(20, 1);
-    affiche_banquise(banquise);
+    T_banquise banquise = init_jeu();
     printf("Chemin : %d\n", chemin_exist(banquise, position_depart(banquise)));
 
     /* Code Ines */
