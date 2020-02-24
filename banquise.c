@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <windows.h>
 #include <stdbool.h>
-#include <conio.h>
+//#include <conio.h>
 
 #include "banquise.h"
 
@@ -147,7 +147,7 @@ int **create_tab_chemin(int taille) {
 int **tab_chemin_fill_eau(T_banquise banquise, int **search) {
     for (int i = 0; i < banquise.taille; i++) {
         for (int j = 0; j < banquise.taille; j++) {
-            if (banquise.tab[i][j].type_case == eau) {
+            if (banquise.tab[i][j].type_case == 0) {
                 search[i][j] = 2;
             }
         }
@@ -162,6 +162,7 @@ int **tab_chemin_fill_eau(T_banquise banquise, int **search) {
  * */
 int chemin_exist(T_banquise banquise, T_pos pos) {
     int **search = tab_chemin_fill_eau(banquise, create_tab_chemin(banquise.taille));
+    //print_search(search, banquise);
     T_pos pos_arrive = position_arrive(banquise);
     int result = chemin_exist_aux(banquise, pos, pos_arrive, search);
     free(search);
@@ -184,7 +185,6 @@ int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **sea
             } else {
                 search[pos.posx][pos.posy] = 1;
                 int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
-                //print_search(search, banquise);
                 if (is_in_banquise(banquise, offset_pos(pos, 1, 0))) {
                     r1 = chemin_exist_aux(banquise, offset_pos(pos, 1, 0), pos_arrive, search);
                 }
@@ -207,8 +207,6 @@ int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **sea
     } else {
         if (search[pos.posx][pos.posy] == 3) {
             return 1;
-        } else if (search[pos.posx][pos.posy] == 2) {
-            return 0;
         } else {
             return 0;
         }
@@ -294,19 +292,20 @@ void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
 }
 
 void remp_banquise_tab(T_case **tab, int taille) {
-    int i, j, x, y, r;
+    int x, y, r;
     r = (rand() % (taille)) + taille;
+    for (int i = 0; i < taille; i++) {
+        for (int j = 0; j < taille; j++) {
+            tab[i][j].but = defaut;
+            tab[i][j].objet = vide;
+            tab[i][j].joueur = NULL;
+            tab[i][j].type_case = eau;
+        }
+    }
     for (int k = 0; k < r; k++) {
         x = rand() % taille;
         y = rand() % taille;
         remp_banquise_tab_aux(tab, taille, x, y);
-    }
-    for (i = 0; i < taille; i++) {
-        for (j = 0; j < taille; j++) {
-            tab[i][j].but = defaut;
-            tab[i][j].objet = vide;
-            tab[i][j].joueur = NULL;
-        }
     }
 }
 
@@ -336,7 +335,7 @@ bool isvalid(int x, int y, int r, int c) {
     return (x >= 0 && y >= 0 && x < r && y < c);
 }
 
-void init_place_joueur(T_case **tab, int taille, file_j *f) {
+/*void init_place_joueur(T_case **tab, int taille, file_j *f) {
     int i, j, x = r, y = c;
     cellule *sauv = f->tete;
     int count = 1;
@@ -432,4 +431,4 @@ void move_j_aux(T_case **tab, int taille, file_j *f) {
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(H, couleurDeFond * 16 + couleurDuTexte);
-}
+}*/

@@ -61,7 +61,7 @@ int init_jeu_aux(){
 
 T_banquise init_jeu() {
     int c = init_jeu_aux();
-    T_banquise banquise = create_banquise(20, c); // TODO Rendre tout ça propre
+    T_banquise banquise = create_banquise(8, c); // TODO Rendre tout ça propre
     T_pos depart = position_depart(banquise);
     T_joueur *joueur = create_list_joueur(c, depart); // TODO faire une fonction qui place les joueurs dans le jeu à dist(depart) <= 2
     affiche_banquise(banquise);
@@ -73,7 +73,7 @@ int main() {
     /* Code Louis */
     T_banquise banquise = init_jeu();
     printf("Chemin : %d\n", chemin_exist(banquise, position_depart(banquise)));
-
+    free(banquise.tab);
     /* Code Ines */
 
     return 0;
