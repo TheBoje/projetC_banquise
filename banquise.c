@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "banquise.h"
 
 
@@ -10,7 +11,8 @@ void init_random() {
     srand(seed);
 }
 
-T_case **create_tab(int taille) {
+
+T_case **create_tab(int taille, int joueurs) {
     T_case **tab = alloue(taille);
     remp_banquise_tab(tab, taille);
     choisir_case_depart(tab, taille);
@@ -21,7 +23,7 @@ T_case **create_tab(int taille) {
 T_banquise create_banquise(int taille, int joueurs) {
     init_random();
     T_banquise banquise;
-    banquise.tab = create_tab(taille);
+    banquise.tab = create_tab(taille, joueurs);
     banquise.taille = taille;
     banquise.nombre_joueur = joueurs;
     return banquise;
@@ -203,6 +205,24 @@ char T_case_to_char(T_type_case c) {
 }
 
 
+T_joueur *create_joueur(int nbJoueurs, T_pos position_depart){
+    T_joueur *joueur;
+    joueur = (T_joueur *)malloc(nbJoueurs * sizeof(T_joueur));
+    for (int i = 0; i < nbJoueurs; i++){
+        strcpy(joueur[i].nom, "Joueur");
+        joueur[i].couleur = i;
+        joueur[i].id = i;
+        joueur[i].position.posx = position_depart.posx + i;
+        joueur[i].position.posy = position_depart.posy;
+        joueur[i].vecteur.dx = 0;
+        joueur[i].vecteur.dy = 0;
+        joueur[i].score.distance = 0;
+        joueur[i].score.nb_glacon = 0;
+        joueur[i].score.nb_victime = 0;
+    }
+    return joueur;
+}
+
 /* Code Ines */
 
 T_case **alloue(int n) {
@@ -236,6 +256,7 @@ void remp_banquise_tab(T_case **tab, int taille) {
         for (j = 0; j < taille; j++) {
             tab[i][j].but = defaut;
             tab[i][j].objet = vide;
+            tab[i][j].joueur = NULL;
         }
     }
 }

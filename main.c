@@ -25,14 +25,13 @@ void affiche_banquise(T_banquise banquise) {
 int init_jeu_joueurs(){
     printf("Jeu de la banquise\n"
            "\n"
-           "Nombre de joueurs : 1 à 4\n"
+           "Nombre de joueurs : 1 a 4\n"
            "\n"
            "Entrez le nombre de joueurs\n");
-    int c;
-    c = getchar();
-    printf("%d", c);
-    if (c >= 1 && c <= 4){
-        return c;
+    char c;
+    scanf("%c", &c);
+    if ((int)c - 48 >= 1 && (int)c - 48 <= 4){
+        return (int)c;
     }
     else {
         system("@cls||clear");
@@ -43,13 +42,12 @@ int init_jeu_joueurs(){
 int init_jeu_aux(){
     printf("Jeu de la Banquise\n"
            "\n"
-           "Créé par Louis Leenart et Ines Mesmi\n"
+           "Cree par Louis Leenart et Ines Mesmi\n"
            "\n"
            "Appuyez sur \"enter\" pour continuer\n"
     );
     int c;
     c = getchar();
-    printf("%d", c);
     if(c == 10){
         system("@cls||clear");
         return init_jeu_joueurs();
@@ -62,8 +60,10 @@ int init_jeu_aux(){
 
 
 T_banquise init_jeu() {
-    init_jeu_aux();
-    T_banquise banquise = create_banquise(20, 1);
+    int c = init_jeu_aux();
+    T_banquise banquise = create_banquise(20, c); // TODO Rendre tout ça propre
+    T_pos depart = position_depart(banquise);
+    T_joueur *joueur = create_joueur(c, depart); // TODO faire une fonction qui place les joueurs dans le jeu à dist(depart) <= 2
     affiche_banquise(banquise);
     return banquise;
 }
