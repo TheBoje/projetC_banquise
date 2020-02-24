@@ -63,7 +63,7 @@ T_banquise init_jeu() {
     int c = init_jeu_aux();
     T_banquise banquise = create_banquise(20, c); // TODO Rendre tout ça propre
     T_pos depart = position_depart(banquise);
-    T_joueur *joueur = create_joueur(c, depart); // TODO faire une fonction qui place les joueurs dans le jeu à dist(depart) <= 2
+    T_joueur *joueur = create_list_joueur(c, depart); // TODO faire une fonction qui place les joueurs dans le jeu à dist(depart) <= 2
     affiche_banquise(banquise);
     return banquise;
 }

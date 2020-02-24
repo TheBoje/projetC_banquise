@@ -54,6 +54,21 @@ typedef struct // Definition du T_joueur, regroupe les caracteristiques du joueu
     T_score score;
 } T_joueur;
 
+typedef struct cellule cellule;
+struct cellule{
+    T_joueur joueur;
+    cellule *suiv;
+};
+
+typedef struct{
+    cellule *tete;
+    cellule *fin;
+}file_j;
+
+void enfiler (file_j *f, T_joueur joueur);
+void defiler(file_j *f);
+file_j create_file_joueur(int joueurs);
+
 /* Code Louis */
 
 /* Code Ines */

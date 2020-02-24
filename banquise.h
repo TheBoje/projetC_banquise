@@ -1,6 +1,7 @@
 #ifndef BANQUISE_H_INCLUDED
 #define BANQUISE_H_INCLUDED
 
+#include <stdbool.h>
 #include"objet.h"
 
 /* ---------- Types Banquise ---------- */
@@ -44,6 +45,8 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
     T_case **tab;
     int taille;
     int nombre_joueur;
+    T_joueur *joueurs;
+    //file_j file_de_joueurs;
 } T_banquise;
 
 /* ---------- Fonctions Banquise ---------- */
@@ -64,17 +67,16 @@ int chemin_exist(T_banquise banquise, T_pos pos);
 int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search);
 char T_but_to_char(T_but objet);
 char T_case_to_char(T_type_case c);
-T_joueur *create_joueur(int nbJoueurs, T_pos position_depart);
+T_joueur *create_list_joueur(int nbJoueurs, T_pos position_depart);
 
 /* Code Ines */
 
 void remp_banquise_tab(T_case **tab, int n);
-
 T_case **alloue(int n);
-
 void choisir_case_arrive(T_case **tab, int taille);
-
 void choisir_case_depart(T_case **tab, int taille);
-
-
+void Color(int couleurDuTexte,int couleurDeFond);
+bool isvalid(int x,int y,int r,int c);
+void init_place_joueur(T_case **tab,int taille, file_j *f);
+void move_j_aux(T_case **tab,int taille, file_j *f);
 #endif // BANQUISE_H_INCLUDED
