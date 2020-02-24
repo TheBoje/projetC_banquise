@@ -11,12 +11,22 @@
 #include "banquise.h"
 
 /* Code Louis */
+
+/* Initialise le random pour la session
+ * A lancer une fois par jeu
+ * Genère une seed à partir de l'horloge internet de l'ordinateur
+ * */
 void init_random() {
     int seed = time(NULL);
     srand(seed);
 }
 
-T_case **create_tab(int taille, int joueurs) {
+/* Créé le tableau de jeu de T_banquise (tab)
+ * Taille : taille du tableau (taille * taille)
+ * Retourne le tableau de T_case representant la banquise
+ * Inclus l'allocation mémoire du tableau, initialisation des cases, et le placement des cases de départ et d'arrivee
+ * */
+T_case **create_tab(int taille) {
     T_case **tab = alloue(taille);
     remp_banquise_tab(tab, taille);
     choisir_case_depart(tab, taille);
@@ -25,15 +35,23 @@ T_case **create_tab(int taille, int joueurs) {
     return tab;
 }
 
+/* Créé la banquise
+ * Taille : taille du tableau (taille * taille)
+ * Retourne le T_banquise contenant les variables du jeu
+ * Inclus l'initialisation du random et l'initialisation des différents variables
+ * */
 T_banquise create_banquise(int taille, int joueurs) {
     init_random();
     T_banquise banquise;
-    banquise.tab = create_tab(taille, joueurs);
+    banquise.tab = create_tab(taille);
     banquise.taille = taille;
     banquise.nombre_joueur = joueurs;
     return banquise;
 }
 
+/* Retourne la position d'arrive à partir de la banquise
+ * Complexite au pire O(n²), n taille de la banquise
+ */
 T_pos position_arrive(T_banquise banquise) {
     T_pos result;
     result.posx = 0;
@@ -49,6 +67,9 @@ T_pos position_arrive(T_banquise banquise) {
     return result;
 }
 
+/* Retourne la position de depart à partir de la banquise
+ * Complexite au pire O(n²), n taille de la banquise
+ * */
 T_pos position_depart(T_banquise banquise) {
     T_pos result;
     result.posx = 0;
@@ -64,12 +85,19 @@ T_pos position_depart(T_banquise banquise) {
     return result;
 }
 
+/* Permet d'offset une position selon x et y
+ * Pos + x (selon x) et Pos + y (selon y)
+ * */
 T_pos offset_pos(T_pos pos, int offx, int offy) {
     pos.posx += offx;
     pos.posy += offy;
     return pos;
 }
 
+/* Verifie si la T_pos est dans banquise.tab
+ * 0 = n'est pas dans la banquise (out of bounds)
+ * 1 = est dans la banquise
+ * */
 int is_in_banquise(T_banquise banquise, T_pos pos) {
     if ((pos.posx < 0)
         || (pos.posy < 0)
@@ -82,6 +110,8 @@ int is_in_banquise(T_banquise banquise, T_pos pos) {
     }
 }
 
+/* Affiche l'état du tableau search pour retracer l'état de chemin_exist
+ * */
 void print_search(int **search, T_banquise banquise) {
     printf("------------------ SEARCH COMMENCE ------------------\n");
     for (int i = 0; i < banquise.taille; i++) {
@@ -93,6 +123,10 @@ void print_search(int **search, T_banquise banquise) {
     printf("------------------ SEARCH TERMINEE ------------------\n");
 }
 
+/* Créé le tableau nécessaire à la recherche de chemin dans chemin_exist
+ * Taille = taille du tableau retourné. Doit être de la même taille que banquise.taille
+ * Alloue l'espace mémoire, et initialise les valeurs à 0
+ * */
 int **create_tab_chemin(int taille) {
     int **tab = (int **) malloc(taille * sizeof(int *));
     for (int i = 0; i < taille; i++) {
@@ -106,6 +140,10 @@ int **create_tab_chemin(int taille) {
     return tab;
 }
 
+/* Fonction annexe de chemin_exist_aux
+ * Associe la valeur 2 dans search à tous les points qui sont de l'eau dans banquise.taille
+ * Permet de gagner de la lisibilité et de reduire le nombre d'opérations dans chemin_exist_aux
+ * */
 int **tab_chemin_fill_eau(T_banquise banquise, int **search) {
     for (int i = 0; i < banquise.taille; i++) {
         for (int j = 0; j < banquise.taille; j++) {
@@ -117,12 +155,23 @@ int **tab_chemin_fill_eau(T_banquise banquise, int **search) {
     return search;
 }
 
+/* Determine l'existence d'un chemin entre pos et la case d'arrive
+ * 0 = pas de chemin existant
+ * 1 = au moins un chemin possible
+ * Appelle la fonction récursive chemin_exist_aux()
+ * */
 int chemin_exist(T_banquise banquise, T_pos pos) {
     int **search = tab_chemin_fill_eau(banquise, create_tab_chemin(banquise.taille));
     T_pos pos_arrive = position_arrive(banquise);
-    return chemin_exist_aux(banquise, pos, pos_arrive, search);
+    int result = chemin_exist_aux(banquise, pos, pos_arrive, search);
+    free(search);
+    return result;
 }
 
+/* Fonction récursive cherchant un chemin entre pos et pos_arrive
+ * Inscrit dans search les cases déjà analysés
+ * Si la case est accessible, alors appelle la fonction pour les cases adjascentes
+ * */
 int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search) {
     if (search[pos.posx][pos.posy] == 0) {
         if (banquise.tab[pos.posx][pos.posy].type_case == eau) {
@@ -166,6 +215,8 @@ int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **sea
     }
 }
 
+/* Converti T_but en charactere pour l'affichage
+ * */
 char T_but_to_char(T_but objet) {
     char result;
     switch (objet) {
@@ -182,6 +233,8 @@ char T_but_to_char(T_but objet) {
     return result;
 }
 
+/* Converti T_case en charactere pour l'affichage
+ * */
 char T_case_to_char(T_type_case c) {
     char result;
     switch (c) {
@@ -198,6 +251,9 @@ char T_case_to_char(T_type_case c) {
     return result;
 }
 
+/* Initialise la liste des joueurs
+ * nbJoueurs = nombre de joueurs
+ * */
 T_joueur *create_list_joueur(int nbJoueurs, T_pos position_depart) {
     T_joueur *joueur;
     joueur = (T_joueur *) malloc(nbJoueurs * sizeof(T_joueur));
