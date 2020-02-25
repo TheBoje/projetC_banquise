@@ -249,24 +249,42 @@ char T_case_to_char(T_type_case c) {
     return result;
 }
 
+/* Place le joueur dans une position aléatoire [-2;2] selon x et y de la case de depart
+ * Fonction auxiliere de create_list_joueur()
+ * */
+T_pos joueur_position(T_banquise banquise, T_pos position_depart){
+    int l, m;
+    T_pos temp;
+    do {
+    l = 2 - (rand() % 5);
+    m = 2 - (rand() % 5);
+    temp = offset_pos(position_depart, l, m);
+    }
+    while (is_in_banquise(banquise, temp) == 0 || banquise.tab[temp.posx][temp.posy].type_case != glace || banquise.tab[temp.posx][temp.posy].but != defaut || banquise.tab[temp.posx][temp.posy].joueur != NULL);
+    return temp;
+}
+
 /* Initialise la liste des joueurs
  * nbJoueurs = nombre de joueurs
  * */
-T_joueur *create_list_joueur(int nbJoueurs, T_pos position_depart) {
+T_joueur *create_list_joueur(T_banquise banquise, int nbJoueurs) {
     T_joueur *joueur;
     joueur = (T_joueur *) malloc(nbJoueurs * sizeof(T_joueur));
+    T_pos depart = position_depart(banquise);
     for (int i = 0; i < nbJoueurs; i++) {
-        strcpy(joueur[i].nom, "Joueur");
+        strcpy(joueur[i].nom, "joueur");
         joueur[i].couleur = i;
         joueur[i].id = i;
-        joueur[i].position.posx = position_depart.posx + i;
-        joueur[i].position.posy = position_depart.posy;
         joueur[i].vecteur.dx = 0;
         joueur[i].vecteur.dy = 0;
         joueur[i].score.distance = 0;
         joueur[i].score.nb_glacon = 0;
         joueur[i].score.nb_victime = 0;
+        T_pos pos_joueur = joueur_position(banquise, depart);
+        joueur[i].position = pos_joueur;
+        banquise.tab[pos_joueur.posx][pos_joueur.posy].joueur = &joueur[i];
     }
+
     return joueur;
 }
 
@@ -293,7 +311,7 @@ void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
 
 void remp_banquise_tab(T_case **tab, int taille) {
     int x, y, r;
-    r = (rand() % (taille)) + taille;
+    r = 2 * taille;
     for (int i = 0; i < taille; i++) {
         for (int j = 0; j < taille; j++) {
             tab[i][j].but = defaut;

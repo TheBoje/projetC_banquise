@@ -67,7 +67,8 @@ int chemin_exist(T_banquise banquise, T_pos pos);
 int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search);
 char T_but_to_char(T_but objet);
 char T_case_to_char(T_type_case c);
-T_joueur *create_list_joueur(int nbJoueurs, T_pos position_depart);
+T_pos joueur_position(T_banquise banquise, T_pos position_depart);
+T_joueur *create_list_joueur(T_banquise banquise, int nbJoueurs);
 
 /* Code Ines */
 
