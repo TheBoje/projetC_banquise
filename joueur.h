@@ -15,7 +15,7 @@
 
 typedef enum // Definition du T_couleur, donne la couleur du joueur
 {
-    BLEU,
+    BLEU = 0,
     ROUGE,
     VERT,
     JAUNE

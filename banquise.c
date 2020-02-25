@@ -252,15 +252,15 @@ char T_case_to_char(T_type_case c) {
 /* Place le joueur dans une position aléatoire [-2;2] selon x et y de la case de depart
  * Fonction auxiliere de create_list_joueur()
  * */
-T_pos joueur_position(T_banquise banquise, T_pos position_depart){
+T_pos joueur_position(T_banquise banquise, T_pos position_depart) {
     int l, m;
     T_pos temp;
     do {
-    l = 2 - (rand() % 5);
-    m = 2 - (rand() % 5);
-    temp = offset_pos(position_depart, l, m);
-    }
-    while (is_in_banquise(banquise, temp) == 0 || banquise.tab[temp.posx][temp.posy].type_case != glace || banquise.tab[temp.posx][temp.posy].but != defaut || banquise.tab[temp.posx][temp.posy].joueur != NULL);
+        l = 2 - (rand() % 5);
+        m = 2 - (rand() % 5);
+        temp = offset_pos(position_depart, l, m);
+    } while (is_in_banquise(banquise, temp) == 0 || banquise.tab[temp.posx][temp.posy].type_case != glace ||
+             banquise.tab[temp.posx][temp.posy].but != defaut || banquise.tab[temp.posx][temp.posy].joueur != NULL);
     return temp;
 }
 

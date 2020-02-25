@@ -49,6 +49,14 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
     //file_j file_de_joueurs;
 } T_banquise;
 
+typedef struct
+{
+    int nbJoueurs;
+    char *nomJoueurs[50];
+    T_couleur *couleursJoueurs;
+    int mapTaille;
+}T_init_jeu;
+
 /* ---------- Fonctions Banquise ---------- */
 
 /* Code Louis */
