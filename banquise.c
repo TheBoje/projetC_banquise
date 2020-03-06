@@ -353,7 +353,8 @@ bool isvalid(int x, int y, int r, int c) {
     return (x >= 0 && y >= 0 && x < r && y < c);
 }
 
-/*void init_place_joueur(T_case **tab, int taille, file_j *f) {
+/*
+void init_place_joueur(T_case **tab, int taille, file_j *f) {
     int i, j, x = r, y = c;
     cellule *sauv = f->tete;
     int count = 1;
@@ -413,40 +414,63 @@ bool isvalid(int x, int y, int r, int c) {
         step++;
     }
 }
+*/
+void move_j_aux(T_banquise *banquise, int p) {
 
-void move_j_aux(T_case **tab, int taille, file_j *f) {
+    int i = banquise->joueurs[p].position.posx;
+    int j = banquise->joueurs[p].position.posy;
+    char m = getchar();
+    if (m == 'q' && j - 1 < banquise->taille && (banquise->tab[i][j - 1].joueur == NULL)) {
+        banquise->joueurs[p].position.posy = j - 1;
+        banquise->tab[i][j - 1].joueur = &(banquise->joueurs[p]);
+        banquise->tab[i][j].joueur = NULL;
 
-    cellule *c = f->tete;
-    int i = c->joueur.position.posx;
-    int j = c->joueur.position.posy;
-    char m = getch();
-    if (m == 'q' && j - 1 < taille && (tab[i][j - 1].joueur == NULL)) {
-        tab[i][j].joueur = NULL;
-        c->joueur.position.posy = j - 1;
-        tab[i][j - 1].joueur = c;
-        tab[i][j].joueur = NULL;
+    } else if (m == 'z' && i - 1 < banquise->taille && (banquise->tab[i - 1][j].joueur == NULL)) {
+        banquise->tab[i][j].joueur = NULL;
+        banquise->joueurs[p].position.posx = i - 1;
+        banquise->tab[i - 1][j].joueur = &(banquise->joueurs[p]);
 
+    } else if (m == 'd' && j + 1 < banquise->taille && (banquise->tab[i][j + 1].joueur == NULL)) {
+        banquise->tab[i][j].joueur = NULL;
+        banquise->joueurs[p].position.posy = j + 1;
+        banquise->tab[i][j + 1].joueur = &(banquise->joueurs[p]);
+
+    } else if (m == 's' && i + 1 < banquise->taille && (banquise->tab[i + 1][j].joueur == NULL)) {
+        banquise->tab[i][j].joueur = NULL;
+        banquise->joueurs[p].position.posx = i + 1;
+        banquise->tab[i + 1][j].joueur = &(banquise->joueurs[p]);
     }
-    if (m == 'z' && i - 1 < taille && (tab[i - 1][j].joueur == NULL)) {
-        tab[i][j].joueur = NULL;
-        c->joueur.position.posx = i - 1;
-        tab[i - 1][j].joueur = c;
+}
 
-    }
-    if (m == 'd' && j + 1 < taille && (tab[i][j + 1].joueur == NULL)) {
-        tab[i][j].joueur = NULL;
-        c->joueur.position.posy = j - 1;
-        tab[i][j + 1].joueur = c;
+// dire si la nouvelle case du joueur est valide
+int pos_j_valide(T_banquise *banquise, int p) {
+    int i = banquise->joueurs[p].position.posx;
+    int j = banquise->joueurs[p].position.posy;
+    if (banquise->tab[i][j].but == arrive || banquise->tab[i][j].type_case == eau) return 0;
+    else return 1;
+}
 
-    }
-    if (m == 's' && i + 1 < taille && (tab[i + 1][j].joueur == NULL)) {
-        tab[i][j].joueur = NULL;
-        c->joueur.position.posx = i - 1;
-        tab[i + 1][j].joueur = c;
+// quand un joueur n'est plus sur une case valide il ne doit plus etre sur la banquise.
+void mettre_case_j_null(T_banquise *banquise, int p) {
+    int i = banquise->joueurs->position.posx;
+    int j = banquise->joueurs->position.posy;
+    banquise->tab[i][j].joueur = NULL;
+}
+
+// faire passer les joueurs un par un
+void move_tour(T_banquise *banquise) {
+    int a = 1;
+    int i;// c'est la position du joueur dans le tableau
+    for (i = 0; i < banquise->nombre_joueur; i++) {
+        while (a == 1) {
+            move_j_aux(banquise, i);
+            a = pos_j_valide(banquise, i);
+        }
+        mettre_case_j_null(banquise, i);
     }
 }
 
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(H, couleurDeFond * 16 + couleurDuTexte);
-}*/
+}

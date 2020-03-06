@@ -87,5 +87,9 @@ void choisir_case_depart(T_case **tab, int taille);
 void Color(int couleurDuTexte,int couleurDeFond);
 bool isvalid(int x,int y,int r,int c);
 void init_place_joueur(T_case **tab,int taille, file_j *f);
-void move_j_aux(T_case **tab,int taille, file_j *f);
+void move_j_aux(T_banquise *banquise,int p);
+int pos_j_valide(T_banquise *banquise, int p);
+void mettre_case_j_null(T_banquise *banquise, int p);
+void move_tour(T_banquise *banquise);
+void Color(int couleurDuTexte, int couleurDeFond);
 #endif // BANQUISE_H_INCLUDED

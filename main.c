@@ -95,7 +95,7 @@ T_init_jeu menu_parametre(T_init_jeu init_jeu_data){
         char nom[50];
         printf("Entrez le nom du joueur %d :\n", i + 1);
         scanf("%s", nom);
-        init_jeu_data.nomJoueurs[i] = nom;
+        init_jeu_data.nomJoueurs[i] = nom; // TODO Faire un malloc je suppose
     }
     print_banquise_game();
     printf("Choix de la taille de la banquise\n"
