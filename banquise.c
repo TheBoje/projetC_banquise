@@ -21,6 +21,28 @@ void init_random() {
     srand(seed);
 }
 
+void adjustWindowSize(int x, int y)
+{
+    struct SMALL_RECT console;
+
+    HANDLE hStdout;
+    COORD coord;
+    BOOL b;
+
+    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    coord.X = x;
+    coord.Y = y;
+    b = SetConsoleScreenBufferSize(hStdout, coord);
+
+    console.Left = 0;
+    console.Top = 0;
+    console.Right = coord.X-1;
+    console.Bottom = coord.Y-1;
+
+    SetConsoleWindowInfo(hStdout, b, &console);
+
+} //end adjustWindowSize
+
 /* Créé le tableau de jeu de T_banquise (tab)
  * Taille : taille du tableau (taille * taille)
  * Retourne le tableau de T_case representant la banquise
@@ -353,68 +375,6 @@ bool isvalid(int x, int y, int r, int c) {
     return (x >= 0 && y >= 0 && x < r && y < c);
 }
 
-/*
-void init_place_joueur(T_case **tab, int taille, file_j *f) {
-    int i, j, x = r, y = c;
-    cellule *sauv = f->tete;
-    int count = 1;
-    int step = 1;
-    while ((r >= 0) && (c >= 0) && sauv != NULL) {
-        for (j = y + 1; j <= y + step; j++)
-            if ((isvalid(x, j, r, c)) && (x < taille) && (j < taille) && (tab[x][j].joueur == NULL) &&
-                (tab[x][j].but != depart) && (tab[x][j].but != arrive) &&
-                (tab[x][j].type_case == glace && (sauv != NULL))) {
-                tab[x][j].joueur = &(sauv->joueur);
-                tab[x][j].joueur->position.posx = x;
-                tab[x][j].joueur->position.posy = y;
-                sauv = sauv->suiv;
-                count++;
-
-            }
-
-        y = y + step;
-        for (i = x + 1; i <= x + step; i++)
-            if ((isvalid(i, y, r, c) && (i < taille) && (y < taille) && tab[i][y].joueur == NULL) &&
-                (tab[i][y].but != depart) && (tab[i][y].but != arrive) &&
-                (tab[i][y].type_case == glace && (sauv != NULL))) {
-                tab[i][y].joueur = &(sauv->joueur);
-                tab[i][y].joueur->position.posx = i;
-                tab[i][y].joueur->position.posy = y;
-                count++;
-                sauv = sauv->suiv;
-            }
-        x = x + step;
-        step++;
-        for (j = y - 1; j >= y - step; j--)
-            if (isvalid(x, j, r, c) && (x < taille) && (j < taille) && (tab[x][j].joueur == NULL) &&
-                (tab[x][j].but != depart) && (tab[x][j].but != arrive) &&
-                (tab[x][j].type_case == glace && (sauv != NULL))) {
-                tab[x][j].joueur = &(sauv->joueur);
-                tab[x][j].joueur->position.posx = x;
-                tab[x][j].joueur->position.posy = y;
-                count++;
-                sauv = sauv->suiv;
-            }
-
-
-        y = y - step;
-        for (i = x - 1; i >= x - step; i--)
-            if (isvalid(i, y, r, c) && (i < taille) && (y < taille) && (tab[i][y].joueur == NULL) &&
-                (tab[i][y].but != depart) && (tab[i][y].but != arrive) &&
-                (tab[i][y].type_case == glace && (sauv != NULL))) {
-                tab[i][y].joueur = &(sauv->joueur);
-                tab[i][y].joueur->position.posx = i;
-                tab[i][y].joueur->position.posy = j;
-                count++;
-                sauv = sauv->suiv;
-            }
-
-
-        x = x - step;
-        step++;
-    }
-}
-*/
 void move_j_aux(T_banquise *banquise, int p) {
 
     int i = banquise->joueurs[p].position.posx;
@@ -470,7 +430,82 @@ void move_tour(T_banquise *banquise) {
     }
 }
 
+void rechauffement_climatique(T_banquise *banquise) {
+    int i, j;
+    int z;
+    for (i = 0; i < banquise->taille; i++) {
+        for (j = 0; j < banquise->taille; j++) {
+            banquise->tab[i][j].joueur = NULL;
+            banquise->tab[i][j].but = defaut;
+            banquise->tab[i][j].objet = vide;
+        }
+    }
+    for (z = 0; z < 2 * (banquise->taille); z++) {
+        i = rand() % banquise->taille;
+        j = rand() % banquise->taille;
+        if (banquise->tab[i][j].type_case == eau) {
+            if (j - 1 < banquise->taille && j - 1 >= 0) {
+                banquise->tab[i][j - 1].type_case = eau;
+                banquise->tab[i][j - 1].joueur = NULL;
+                banquise->tab[i][j - 1].but = defaut;
+                banquise->tab[i][j - 1].objet = vide;
+            }
+            if (j + 1 < banquise->taille && j + 1 >= 0) {
+                banquise->tab[i][j + 1].type_case = eau;
+                banquise->tab[i][j + 1].joueur = NULL;
+                banquise->tab[i][j + 1].but = defaut;
+                banquise->tab[i][j + 1].objet = vide;
+            }
+            if (i - 1 < banquise->taille && i - 1 >= 0) {
+                banquise->tab[i - 1][j].type_case = eau;
+                banquise->tab[i - 1][j].joueur = NULL;
+                banquise->tab[i - 1][j].but = defaut;
+                banquise->tab[i - 1][j].objet = vide;
+            }
+            if (i + 1 < banquise->taille && i + 1 >= 0) {
+                banquise->tab[i + 1][j].type_case = eau;
+                banquise->tab[i + 1][j].joueur = NULL;
+                banquise->tab[i + 1][j].but = defaut;
+                banquise->tab[i + 1][j].objet = vide;
+            }
+        }
+    }
+}
+/*
+
+// je l'ai simplifié mais posdepi et posdepj sont toujours des variables globales qui stockent le i et j de la position de depart
+void init_place_joueur(T_banquise *banquise) {
+    int i, j;
+    int p = 0;
+    int a = 1;
+
+    while (p < banquise->nombre_joueur) {
+        for (i = posdepi - a; i <= posdepi + a; i++)// position de depart sur i
+        {
+            for (j = posdepj - a; j <= posdepj + a; j++)//position d'arrrivé sur j
+            {
+                if ((i > 0) && (j > 0) && (i < banquise->taille) && (j < banquise->taille) &&
+                    (banquise->tab[i][j].joueur == NULL) && (banquise->tab[i][j].but != depart) &&
+                    (banquise->tab[i][j].but != arrive) && (banquise->tab[i][j].type_case == glace) &&
+                    (p < banquise->nombre_joueur)) {
+                    banquise->tab[i][j].joueur = &(banquise->joueurs[p]);
+                    banquise->joueurs[p].position.posx = i;
+                    banquise->joueurs[p].position.posy = j;
+                    p++;
+
+
+                }
+            }
+
+
+        }
+        a++;
+    }
+}
+
+
+
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(H, couleurDeFond * 16 + couleurDuTexte);
-}
+}*/

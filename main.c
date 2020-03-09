@@ -3,8 +3,11 @@
 #include <windows.h>
 #include <string.h>
 #include "banquise.h"
+#include "main.h"
 
-void print_banquise_game(){
+T_init_jeu init_jeu_data;
+
+void print_banquise_game() {
     system("@cls||clear");
     printf(" ____                          _             ____                      \n"
            "| __ )  __ _ _ __   __ _ _   _(_)___  ___   / ___| __ _ _ __ ___   ___ \n"
@@ -34,48 +37,51 @@ void affiche_banquise(T_banquise banquise) {
     }
 }
 
-T_init_jeu init_jeu_joueurs(T_init_jeu init_jeu_data){
-    print_banquise_game();
-    printf("Nombre de joueurs : 1 a 4\n"
-           "\n"
-           "Entrez le nombre de joueurs\n");
-    char c;
+void print_init_jeu() {
+    printf("Nb joueurs : %d\n", init_jeu_data.nbJoueurs);
+    for (int i = 0; i < init_jeu_data.nbJoueurs; i++) {
+        printf("Joueur n%d, nom : %s\n", i + 1, init_jeu_data.nomJoueurs[i]);
+    }
+    printf("Taille de la carte : %d\n", init_jeu_data.mapTaille);
+    char c = ' ';
     scanf("%c", &c);
-    int temp = (int)c - 48;
-    if (temp >= 1 && temp <= 4){
-        system("@cls||clear");
-        init_jeu_data.nbJoueurs = temp;
-        return init_jeu_data;
-    }
-    else {
+    if (c != ' '){
         fflush(stdin);
-        return init_jeu_joueurs(init_jeu_data);
     }
+    else print_init_jeu();
 }
 
-void print_init_jeu(T_init_jeu init_jeu){
-    printf("Nb joueurs : %d\n", init_jeu.nbJoueurs);
-    for (int i = 0; i < init_jeu.nbJoueurs; i++){
-        printf("Joueur n%d, nom : %s\n", i + 1, init_jeu.nomJoueurs[i]);
-    }
-    printf("Taille de la carte : %d\n", init_jeu.mapTaille);
-}
-
-void menu_commandes(){
+void menu_commandes() {
     print_banquise_game();
     printf("Les controles sont les suivants :\n"
            "- Z Q S D pour se déplacer avec le personnage\n"
            "- A COMPLETER\n"); //TODO Completer
-           // TODO return to last menu
+    char c = ' ';
+    scanf("%c", &c);
+    if (c != ' '){
+        fflush(stdin);
+        init_jeu_data.statusMenu = 1;
+    }
+    else {
+        init_jeu_data.statusMenu = 3;
+    }
 }
 
-void menu_regles(){
+void menu_regles() {
     print_banquise_game();
-    printf("A écrire\n"); //TODO Completer
-    // TODO return to last menu
+    printf("Des regles vraiment interessantes et claires\n"); //TODO Completer
+    char c = ' ';
+    scanf("%c", &c);
+    if (c != ' '){
+        fflush(stdin);
+        init_jeu_data.statusMenu = 1;
+    }
+    else {
+        init_jeu_data.statusMenu = 2;
+    }
 }
 
-T_init_jeu menu_parametre(T_init_jeu init_jeu_data){
+void menu_parametre() {
     print_banquise_game();
     printf("Nombre de joueurs : 1 a 4\n"
            "\n"
@@ -95,7 +101,7 @@ T_init_jeu menu_parametre(T_init_jeu init_jeu_data){
         char nom[50];
         printf("Entrez le nom du joueur %d :\n", i + 1);
         scanf("%s", nom);
-        init_jeu_data.nomJoueurs[i] = nom; // TODO Faire un malloc je suppose
+        init_jeu_data.nomJoueurs[i] = nom; // TODO Faire un malloc je suppose car ne fonctionne pas pour l'instant
     }
     print_banquise_game();
     printf("Choix de la taille de la banquise\n"
@@ -103,60 +109,94 @@ T_init_jeu menu_parametre(T_init_jeu init_jeu_data){
            "Compris entre 10 et 40\n");
     int taille;
     scanf("%d", &taille);
-    if (taille > 40){
-        taille =  40;
+    if (taille > 40) {
+        taille = 40;
     } else if (taille < 10) {
         taille = 10;
     }
     init_jeu_data.mapTaille = taille;
-    return init_jeu_data;
+    init_jeu_data.statusMenu = 1;
 }
 
-T_init_jeu init_jeu_select_menu(T_init_jeu init_jeu_data){
+void init_jeu_select_menu() {
     print_banquise_game();
     printf("Liste des menus, appuyez sur la touche correspondante :\n"
            "- \"r\" pour les règles\n"
            "- \"c\" pour les commandes\n"
            "- \"p\" pour ouvrir les parametres\n"
-           "- \"q\" pour fermer le jeu\n"); //TODO force quit function
+           "- \"q\" pour fermer le jeu\n"
+           "- \"g\" pour lancer la partie\n");
     char c;
-    c = getchar();
-    switch (c){
-        case 'r': menu_regles();
+    scanf("%c", &c);
+    fflush(stdin);
+    switch (c) {
+        case 'r':
+            init_jeu_data.statusMenu = 2;
             break;
-        case 'c': menu_commandes();
+        case 'c':
+            init_jeu_data.statusMenu = 3;
             break;
-        case 'p': init_jeu_data = menu_parametre(init_jeu_data);
+        case 'p':
+            init_jeu_data.statusMenu = 4;
             break;
-        default: init_jeu_select_menu(init_jeu_data);
+        case 'q':
+            exit(1);
+        case 'g':
+            init_jeu_data.statusMenu = 0;
+            break;
+        default:
+            init_jeu_data.statusMenu = 1;
             break;
     }
-    return init_jeu_data;
+    init_jeu_menu_manager();
 }
 
-T_init_jeu init_jeu_aux(){
-    T_init_jeu init_jeu_data;
+void init_jeu_menu_manager(){
+    switch (init_jeu_data.statusMenu){
+        case 0:
+            fprintf(stdout, "PLAY GAME\n");
+            break;
+        case 1:
+            init_jeu_select_menu();
+            break;
+        case 2:
+            menu_regles();
+            init_jeu_menu_manager();
+            break;
+        case 3:
+            menu_commandes();
+            init_jeu_menu_manager();
+            break;
+        case 4:
+            menu_parametre();
+            init_jeu_menu_manager();
+            break;
+        default:
+            init_jeu_select_menu();
+            break;
+    }
+}
+
+void init_jeu_aux() {
+    init_jeu_data.statusMenu = 1; // Status => 0 = joue, 1 = init menu, 2 = regles, 3 = commandes, 4 = parametres
     print_banquise_game();
     printf("Cree par Louis Leenart et Ines Mesmi\n"
            "\n"
            "Appuyez sur \"enter\" pour continuer\n");
     int c;
     c = getchar();
-    while (c != 10){
+    while (c != 10) {
         fflush(stdin);
         c = getchar();
     }
-    init_jeu_data = init_jeu_select_menu(init_jeu_data);
-    return init_jeu_data;
+    init_jeu_select_menu();
 }
 
 
 T_banquise init_jeu() {
-    T_init_jeu init_jeu_data = init_jeu_aux();
-    print_init_jeu(init_jeu_data);
-    int c = 2;
-    T_banquise banquise = create_banquise(25, c); // TODO Faire ça plus proprement
-    T_joueur *joueur = create_list_joueur(banquise, c);
+    init_jeu_aux();
+    T_banquise banquise = create_banquise(25, init_jeu_data.nbJoueurs);
+    T_joueur *joueur = create_list_joueur(banquise, init_jeu_data.nbJoueurs);
     //affiche_banquise(banquise);
     return banquise;
 }
@@ -165,6 +205,8 @@ T_banquise init_jeu() {
 int main() {
     /* Code Louis */
     T_banquise banquise = init_jeu();
+    adjustWindowSize(1000, 1000); // TODO ne fonctionne pas correctement
+    affiche_banquise(banquise);
     printf("Chemin : %d\n", chemin_exist(banquise, position_depart(banquise)));
     free(banquise.tab);
     /* Code Ines */

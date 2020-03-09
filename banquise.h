@@ -55,12 +55,22 @@ typedef struct
     char *nomJoueurs[50];
     T_couleur *couleursJoueurs;
     int mapTaille;
+    int statusMenu;
 }T_init_jeu;
+
+// Nécessaire pour la modification de la taille de la console
+struct SMALL_RECT {
+    SHORT Left;
+    SHORT Top;
+    SHORT Right;
+    SHORT Bottom;
+};
 
 /* ---------- Fonctions Banquise ---------- */
 
 /* Code Louis */
 void init_random();
+void adjustWindowSize(int x, int y);
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y);
 T_case **create_tab(int taille);
 T_banquise create_banquise(int taille, int joueurs);
@@ -86,10 +96,11 @@ void choisir_case_arrive(T_case **tab, int taille);
 void choisir_case_depart(T_case **tab, int taille);
 void Color(int couleurDuTexte,int couleurDeFond);
 bool isvalid(int x,int y,int r,int c);
-void init_place_joueur(T_case **tab,int taille, file_j *f);
+void init_place_joueur(T_banquise *banquise);
 void move_j_aux(T_banquise *banquise,int p);
 int pos_j_valide(T_banquise *banquise, int p);
 void mettre_case_j_null(T_banquise *banquise, int p);
 void move_tour(T_banquise *banquise);
+void rechauffement_climatique(T_banquise *banquise);
 void Color(int couleurDuTexte, int couleurDeFond);
 #endif // BANQUISE_H_INCLUDED
