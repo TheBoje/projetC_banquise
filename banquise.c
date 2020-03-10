@@ -310,6 +310,48 @@ T_joueur *create_list_joueur(T_banquise banquise, int nbJoueurs) {
     return joueur;
 }
 
+
+void remp_banquise_tab_edge(T_case **tab, int taille){
+    int **search = create_tab_chemin(taille);
+    for (int i = 0; i < taille; i++){
+        for (int j = 0; j < taille; j++){
+            if (tab[i][j].type_case == 0){
+                int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
+                if (i + 1 < taille){
+                    if (tab[i + 1][j].type_case == 1){
+                        r1 = 1;
+                    }
+                }
+                if (i - 1 >= 0){
+                    if (tab[i - 1][j].type_case == 1){
+                        r2 = 1;
+                    }
+                }
+                if ( j + 1 < taille ){
+                    if (tab[i][j + 1].type_case == 1){
+                        r3 = 1;
+                    }
+                }
+                if (j - 1 >= 0){
+                    if (tab[i][j - 1].type_case == 1){
+                        r4 = 1;
+                    }
+                }
+                if (r1 || r2 || r3 || r4){
+                    search[i][j] = 1;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < taille; i++){
+        for (int j = 0; j < taille; j++) {
+            if (search[i][j] == 1 && rand()%2 == 0){
+                tab[i][j].type_case = 1;
+            }
+        }
+    }
+}
+
 /* Code Ines */
 
 T_case **alloue(int n) {
@@ -320,6 +362,7 @@ T_case **alloue(int n) {
     }
     return tab;
 }
+
 
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
     for (int i = x - 1; i <= x + 1; i++) {
@@ -347,6 +390,7 @@ void remp_banquise_tab(T_case **tab, int taille) {
         y = rand() % taille;
         remp_banquise_tab_aux(tab, taille, x, y);
     }
+    remp_banquise_tab_edge(tab, taille);
 }
 
 void choisir_case_depart(T_case **tab, int taille) {
