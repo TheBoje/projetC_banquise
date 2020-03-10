@@ -21,28 +21,6 @@ void init_random() {
     srand(seed);
 }
 
-void adjustWindowSize(int x, int y)
-{
-    struct SMALL_RECT console;
-
-    HANDLE hStdout;
-    COORD coord;
-    BOOL b;
-
-    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-    coord.X = x;
-    coord.Y = y;
-    b = SetConsoleScreenBufferSize(hStdout, coord);
-
-    console.Left = 0;
-    console.Top = 0;
-    console.Right = coord.X-1;
-    console.Bottom = coord.Y-1;
-
-    SetConsoleWindowInfo(hStdout, b, &console);
-
-} //end adjustWindowSize
-
 /* Créé le tableau de jeu de T_banquise (tab)
  * Taille : taille du tableau (taille * taille)
  * Retourne le tableau de T_case representant la banquise

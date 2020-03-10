@@ -56,21 +56,13 @@ typedef struct
     T_couleur *couleursJoueurs;
     int mapTaille;
     int statusMenu;
+    bool param;
 }T_init_jeu;
-
-// Nécessaire pour la modification de la taille de la console
-struct SMALL_RECT {
-    SHORT Left;
-    SHORT Top;
-    SHORT Right;
-    SHORT Bottom;
-};
 
 /* ---------- Fonctions Banquise ---------- */
 
 /* Code Louis */
 void init_random();
-void adjustWindowSize(int x, int y);
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y);
 T_case **create_tab(int taille);
 T_banquise create_banquise(int taille, int joueurs);

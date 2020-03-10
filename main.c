@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
 #include <string.h>
 #include "banquise.h"
 #include "main.h"
+#define WINVER 0x0500
+#include <windows.h>
 
 T_init_jeu init_jeu_data;
 
@@ -116,12 +117,13 @@ void menu_parametre() {
     }
     init_jeu_data.mapTaille = taille;
     init_jeu_data.statusMenu = 1;
+    init_jeu_data.param = 1;
 }
 
 void init_jeu_select_menu() {
     print_banquise_game();
     printf("Liste des menus, appuyez sur la touche correspondante :\n"
-           "- \"r\" pour les règles\n"
+           "- \"r\" pour les regles\n"
            "- \"c\" pour les commandes\n"
            "- \"p\" pour ouvrir les parametres\n"
            "- \"q\" pour fermer le jeu\n"
@@ -142,7 +144,12 @@ void init_jeu_select_menu() {
         case 'q':
             exit(1);
         case 'g':
+            if (init_jeu_data.param == 0){
+                init_jeu_data.statusMenu = 4;
+            }
+            else {
             init_jeu_data.statusMenu = 0;
+            }
             break;
         default:
             init_jeu_data.statusMenu = 1;
@@ -154,7 +161,6 @@ void init_jeu_select_menu() {
 void init_jeu_menu_manager(){
     switch (init_jeu_data.statusMenu){
         case 0:
-            fprintf(stdout, "PLAY GAME\n");
             break;
         case 1:
             init_jeu_select_menu();
@@ -179,6 +185,7 @@ void init_jeu_menu_manager(){
 
 void init_jeu_aux() {
     init_jeu_data.statusMenu = 1; // Status => 0 = joue, 1 = init menu, 2 = regles, 3 = commandes, 4 = parametres
+    init_jeu_data.param = 0;
     print_banquise_game();
     printf("Cree par Louis Leenart et Ines Mesmi\n"
            "\n"
@@ -197,7 +204,6 @@ T_banquise init_jeu() {
     init_jeu_aux();
     T_banquise banquise = create_banquise(25, init_jeu_data.nbJoueurs);
     T_joueur *joueur = create_list_joueur(banquise, init_jeu_data.nbJoueurs);
-    //affiche_banquise(banquise);
     return banquise;
 }
 
@@ -205,7 +211,8 @@ T_banquise init_jeu() {
 int main() {
     /* Code Louis */
     T_banquise banquise = init_jeu();
-    adjustWindowSize(1000, 1000); // TODO ne fonctionne pas correctement
+    HWND wh = GetConsoleWindow(); // Récupération de la console windows dans laquelle le jeu est affiché
+    MoveWindow(wh, 0, 0, 1000, 1000, TRUE); // Agrandissement de la taille de la console
     affiche_banquise(banquise);
     printf("Chemin : %d\n", chemin_exist(banquise, position_depart(banquise)));
     free(banquise.tab);
