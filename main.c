@@ -25,7 +25,7 @@ void affiche_banquise(T_banquise banquise) {
     for (i = 0; i < banquise.taille; i++) {
         for (j = 0; j < banquise.taille; j++) {
             if (banquise.tab[i][j].joueur != NULL) {
-                fprintf(stdout, " %c ", 'X');
+                fprintf(stdout, " %d ", banquise.tab[i][j].joueur->id + 1);
             } else if (banquise.tab[i][j].but != defaut) {
                 fprintf(stdout, " %c ", T_but_to_char(banquise.tab[i][j].but));
             } else if (banquise.tab[i][j].objet != vide) {
@@ -42,7 +42,11 @@ void menu_commandes() {
     print_banquise_game();
     printf("Les controles sont les suivants :\n"
            "- Z Q S D pour se deplacer avec le personnage\n"
-           "- A COMPLETER\n"); //TODO Completer
+           "A = Arrivee\n"
+           "D = Depart\n"
+           "* = Banquise\n"
+           "  = Eau\n"
+           "1/2/3/4 = Joueur\n"); //TODO Completer
     char c = ' ';
     scanf("%c", &c);
     if (c != ' '){
@@ -234,6 +238,7 @@ int main() {
     MoveWindow(wh, 0, 0, 1000, 1000, TRUE); // Agrandissement de la taille de la console
     affiche_banquise(banquise);
     printf("Chemin : %d\n", chemin_exist(banquise, position_depart(banquise)));
+    int nbTours = 0;
     // Boucle principale de jeu
     while (banquise.nombre_joueur > 0)
     {
@@ -241,7 +246,7 @@ int main() {
             affiche_banquise(banquise);
             char input;
             T_vec vec;
-            bool joue = true;
+            debug_position(banquise);
             printf("Joueur %d input :\n", i+1);
             fflush(stdin);
             scanf("%c", &input);
@@ -249,6 +254,7 @@ int main() {
             banquise.joueurs[i].vecteur = vec;
             move_tour(banquise, i);
         }
+        nbTours += 1;
     }
     free(banquise.tab);
     /* Code Ines */

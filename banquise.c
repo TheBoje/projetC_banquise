@@ -329,6 +329,21 @@ void remp_banquise_tab_edge(T_case **tab, int taille){
     }
 }
 
+void debug_position(T_banquise banquise){
+    for (int i = 0; i < banquise.nombre_joueur; i++){
+        fprintf(stdout, "joueur %d\t\t", i + 1);
+    }
+    fprintf(stdout, "\n");
+    for (int i = 0; i < banquise.nombre_joueur; i++) {
+        fprintf(stdout, "pos : %d %d\t\t", banquise.joueurs[i].position.posx, banquise.joueurs[i].position.posy);
+    }
+    fprintf(stdout, "\n");
+    for (int i = 0; i < banquise.nombre_joueur; i++) {
+        fprintf(stdout, "vec : %d %d\t\t", banquise.joueurs[i].vecteur.dx, banquise.joueurs[i].vecteur.dy);
+    }
+    fprintf(stdout, "\n");
+}
+
 /* Code Ines */
 
 T_case **alloue(int n) {

@@ -60,6 +60,7 @@ typedef struct
 /* ---------- Fonctions Banquise ---------- */
 
 /* Code Louis */
+
 void init_random();
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y);
 T_case **create_tab(int taille);
@@ -78,8 +79,9 @@ char T_case_to_char(T_type_case c);
 T_pos joueur_position(T_banquise banquise, T_pos position_depart);
 T_joueur *create_list_joueur(T_banquise banquise, int nbJoueurs);
 void remp_banquise_tab_edge(T_case **tab, int taille);
-/* Code Ines */
+void debug_position(T_banquise banquise);
 
+/* Code Ines */
 
 T_case **alloue(int n);
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y);
@@ -95,4 +97,5 @@ void mettre_case_j_null(T_banquise banquise, int joueur);
 void move_tour(T_banquise banquise, int joueur);
 void rechauffement_climatique(T_banquise *banquise);
 void Color(int couleurDuTexte, int couleurDeFond);
+
 #endif // BANQUISE_H_INCLUDED
