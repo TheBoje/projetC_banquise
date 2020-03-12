@@ -194,21 +194,21 @@ void init_jeu_aux() {
 T_vec char_to_t_vec(char c){
     T_vec result;
     switch (c){
-        case 'Z':
-            result.dx = 0;
-            result.dy = 1;
-            break;
-        case 'Q':
+        case 'z':
             result.dx = -1;
             result.dy = 0;
             break;
-        case 'S':
+        case 'q':
             result.dx = 0;
             result.dy = -1;
             break;
-        case 'D':
+        case 's':
             result.dx = 1;
             result.dy = 0;
+            break;
+        case 'd':
+            result.dx = 0;
+            result.dy = 1;
             break;
         default:
             result.dx = 0;
@@ -222,6 +222,7 @@ T_banquise init_jeu() {
     init_jeu_aux();
     T_banquise banquise = create_banquise(init_jeu_data.mapTaille, init_jeu_data.nbJoueurs);
     T_joueur *joueur = create_list_joueur(banquise, init_jeu_data.nbJoueurs);
+    banquise.joueurs = joueur;
     return banquise;
 }
 
@@ -237,18 +238,16 @@ int main() {
     while (banquise.nombre_joueur > 0)
     {
         for (int i = 0; i < banquise.nombre_joueur; i++){
+            affiche_banquise(banquise);
             char input;
             T_vec vec;
-            bool joue;
-            do {
-                for (int j = 0; j < init_jeu_data.nbJoueurs; j++){
-                    printf("joueur %d : %s\n", j + 1, init_jeu_data.nomJoueurs[j]);
-                }
-                scanf("%c", &input);
-                vec = char_to_t_vec(input);
-                joue = false;
-            }
-            while (joue);
+            bool joue = true;
+            printf("Joueur %d input :\n", i+1);
+            fflush(stdin);
+            scanf("%c", &input);
+            vec = char_to_t_vec(input);
+            banquise.joueurs[i].vecteur = vec;
+            move_tour(banquise, i);
         }
     }
     free(banquise.tab);

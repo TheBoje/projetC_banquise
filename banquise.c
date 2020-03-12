@@ -392,58 +392,51 @@ void choisir_case_arrive(T_case **tab, int taille) {
     tab[i][j].but = arrive;
 }
 
-void move_j_aux(T_banquise *banquise, int p) {
-
-    int i = banquise->joueurs[p].position.posx;
-    int j = banquise->joueurs[p].position.posy;
-    char m = getchar();
-    if (m == 'q' && j - 1 < banquise->taille && (banquise->tab[i][j - 1].joueur == NULL)) {
-        banquise->joueurs[p].position.posy = j - 1;
-        banquise->tab[i][j - 1].joueur = &(banquise->joueurs[p]);
-        banquise->tab[i][j].joueur = NULL;
-
-    } else if (m == 'z' && i - 1 < banquise->taille && (banquise->tab[i - 1][j].joueur == NULL)) {
-        banquise->tab[i][j].joueur = NULL;
-        banquise->joueurs[p].position.posx = i - 1;
-        banquise->tab[i - 1][j].joueur = &(banquise->joueurs[p]);
-
-    } else if (m == 'd' && j + 1 < banquise->taille && (banquise->tab[i][j + 1].joueur == NULL)) {
-        banquise->tab[i][j].joueur = NULL;
-        banquise->joueurs[p].position.posy = j + 1;
-        banquise->tab[i][j + 1].joueur = &(banquise->joueurs[p]);
-
-    } else if (m == 's' && i + 1 < banquise->taille && (banquise->tab[i + 1][j].joueur == NULL)) {
-        banquise->tab[i][j].joueur = NULL;
-        banquise->joueurs[p].position.posx = i + 1;
-        banquise->tab[i + 1][j].joueur = &(banquise->joueurs[p]);
-    }
+void move_j_aux(T_banquise banquise, int joueur) {
+    T_pos pos = banquise.joueurs[joueur].position;
+    T_vec vec = banquise.joueurs[joueur].vecteur;
+    T_pos new_pos;
+    new_pos.posx = pos.posx + vec.dx;
+    new_pos.posy = pos.posy + vec.dy;
+    banquise.tab[new_pos.posx][new_pos.posy].joueur = &banquise.joueurs[joueur];
 }
 
 // dire si la nouvelle case du joueur est valide
 int pos_j_valide(T_banquise *banquise, int p) {
-    int i = banquise->joueurs[p].position.posx;
-    int j = banquise->joueurs[p].position.posy;
-    if (banquise->tab[i][j].but == arrive || banquise->tab[i][j].type_case == eau) return 0;
-    else return 1;
+    int i = banquise->joueurs[p].position.posx + banquise->joueurs[p].vecteur.dx;
+    int j = banquise->joueurs[p].position.posy + banquise->joueurs[p].vecteur.dy;
+    if (i < 0 || i >= banquise->taille || j < 0 || j >= banquise->taille){
+        return 0;
+    }
+    else if (banquise->tab[i][j].but == arrive || banquise->tab[i][j].type_case == eau || banquise->tab[i][j].joueur != NULL) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
 }
 
 // quand un joueur n'est plus sur une case valide il ne doit plus etre sur la banquise.
-void mettre_case_j_null(T_banquise *banquise, int p) {
-    int i = banquise->joueurs->position.posx;
-    int j = banquise->joueurs->position.posy;
-    banquise->tab[i][j].joueur = NULL;
+void mettre_case_j_null(T_banquise banquise, int joueur) {
+    T_pos pos = banquise.joueurs[joueur].position;
+    banquise.tab[pos.posx][pos.posy].joueur = NULL;
 }
 
 // faire passer les joueurs un par un
-void move_tour(T_banquise *banquise) {
-    int a = 1;
-    int i;// c'est la position du joueur dans le tableau
-    for (i = 0; i < banquise->nombre_joueur; i++) {
-        while (a == 1) {
-            move_j_aux(banquise, i);
-            a = pos_j_valide(banquise, i);
-        }
-        mettre_case_j_null(banquise, i);
+void move_tour(T_banquise banquise, int joueur) {
+    T_pos pos_joueur = banquise.joueurs[joueur].position;
+    T_vec vec_joueur = banquise.joueurs[joueur].vecteur;
+    if (pos_j_valide(&banquise, joueur) == 1){
+        T_pos new_pos;
+        new_pos.posx = pos_joueur.posx + vec_joueur.dx;
+        new_pos.posy = pos_joueur.posy + vec_joueur.dy;
+        T_vec vec_null;
+        vec_null.dx = 0;
+        vec_null.dy = 0;
+        move_j_aux(banquise, joueur);
+        mettre_case_j_null(banquise, joueur);
+        banquise.joueurs[joueur].position = new_pos;
+        banquise.joueurs[joueur].vecteur = vec_null;
     }
 }
 
@@ -488,8 +481,6 @@ void rechauffement_climatique(T_banquise *banquise) {
         }
     }
 }
-
-
 
 
 void Color(int couleurDuTexte, int couleurDeFond) {
