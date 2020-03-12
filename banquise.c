@@ -30,7 +30,6 @@ T_case **create_tab(int taille) {
     remp_banquise_tab(tab, taille);
     choisir_case_depart(tab, taille);
     choisir_case_arrive(tab, taille);
-    //init_place_joueur(tab,taille,&filedej);
     return tab;
 }
 
@@ -42,9 +41,12 @@ T_case **create_tab(int taille) {
 T_banquise create_banquise(int taille, int joueurs) {
     init_random();
     T_banquise banquise;
-    banquise.tab = create_tab(taille);
     banquise.taille = taille;
     banquise.nombre_joueur = joueurs;
+    do{
+        banquise.tab = create_tab(taille);
+    }
+    while (chemin_exist(banquise, position_depart(banquise)) == 0);
     return banquise;
 }
 

@@ -234,6 +234,9 @@ T_banquise init_jeu() {
 int main() {
     /* Code Louis */
     T_banquise banquise = init_jeu();
+    while (chemin_exist(banquise, position_depart(banquise)) == 0){
+        banquise.tab = create_tab(init_jeu_data.mapTaille);
+    }
     HWND wh = GetConsoleWindow(); // Récupération de la console windows dans laquelle le jeu est affiché
     MoveWindow(wh, 0, 0, 1000, 1000, TRUE); // Agrandissement de la taille de la console
     affiche_banquise(banquise);
