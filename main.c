@@ -125,8 +125,8 @@ void init_jeu_select_menu() {
            "- \"q\" pour fermer le jeu\n"
            "- \"g\" pour lancer la partie\n");
     char c;
-    scanf("%c", &c);
     fflush(stdin);
+    scanf("%c", &c);
     switch (c) {
         case 'r':
             init_jeu_data.statusMenu = 2;
@@ -266,6 +266,12 @@ int main() {
     T_pos arrive = position_arrive(banquise);
     gagnant = *banquise.tab[arrive.posx][arrive.posy].joueur;
     fprintf(stdout, "Le gagnant est le joueur %s ! Felicitations !\n", gagnant.nom);
+    char c;
+    fflush(stdin);
+    scanf("%c", &c);
+    if (c != 'd' && c != 's' && c != 'q' && c != 'z'){
+        exit(1);
+    }
     free(banquise.tab);
 
     return 0;
