@@ -36,7 +36,6 @@ typedef struct // Definition du T_case, regroupe toutes les proprietes d'une cas
     T_but but;
     T_objet objet;
     T_joueur *joueur;
-    T_vec vecteur;
 } T_case;
 
 
@@ -46,13 +45,12 @@ typedef struct // Definition du T_banquise, contient la matrice de cases, la tai
     int taille;
     int nombre_joueur;
     T_joueur *joueurs;
-    //file_j file_de_joueurs;
 } T_banquise;
 
 typedef struct
 {
     int nbJoueurs;
-    char *nomJoueurs[50];
+    char **nomJoueurs;
     T_couleur *couleursJoueurs;
     int mapTaille;
     int statusMenu;

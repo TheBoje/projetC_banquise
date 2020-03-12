@@ -14,6 +14,7 @@ void menu_parametre();
 void init_jeu_select_menu();
 void init_jeu_menu_manager();
 void init_jeu_aux();
+T_vec char_to_t_vec(char c);
 T_banquise init_jeu();
 int main();
 

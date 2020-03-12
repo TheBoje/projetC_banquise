@@ -6,7 +6,6 @@
 #include <sys/time.h>
 #include <windows.h>
 #include <stdbool.h>
-//#include <conio.h>
 
 #include "banquise.h"
 
@@ -393,10 +392,6 @@ void choisir_case_arrive(T_case **tab, int taille) {
     tab[i][j].but = arrive;
 }
 
-bool isvalid(int x, int y, int r, int c) {
-    return (x >= 0 && y >= 0 && x < r && y < c);
-}
-
 void move_j_aux(T_banquise *banquise, int p) {
 
     int i = banquise->joueurs[p].position.posx;
@@ -493,41 +488,11 @@ void rechauffement_climatique(T_banquise *banquise) {
         }
     }
 }
-/*
 
-// je l'ai simplifié mais posdepi et posdepj sont toujours des variables globales qui stockent le i et j de la position de depart
-void init_place_joueur(T_banquise *banquise) {
-    int i, j;
-    int p = 0;
-    int a = 1;
-
-    while (p < banquise->nombre_joueur) {
-        for (i = posdepi - a; i <= posdepi + a; i++)// position de depart sur i
-        {
-            for (j = posdepj - a; j <= posdepj + a; j++)//position d'arrrivé sur j
-            {
-                if ((i > 0) && (j > 0) && (i < banquise->taille) && (j < banquise->taille) &&
-                    (banquise->tab[i][j].joueur == NULL) && (banquise->tab[i][j].but != depart) &&
-                    (banquise->tab[i][j].but != arrive) && (banquise->tab[i][j].type_case == glace) &&
-                    (p < banquise->nombre_joueur)) {
-                    banquise->tab[i][j].joueur = &(banquise->joueurs[p]);
-                    banquise->joueurs[p].position.posx = i;
-                    banquise->joueurs[p].position.posy = j;
-                    p++;
-
-
-                }
-            }
-
-
-        }
-        a++;
-    }
-}
 
 
 
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(H, couleurDeFond * 16 + couleurDuTexte);
-}*/
+}

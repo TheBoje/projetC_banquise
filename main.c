@@ -38,24 +38,10 @@ void affiche_banquise(T_banquise banquise) {
     }
 }
 
-void print_init_jeu() {
-    printf("Nb joueurs : %d\n", init_jeu_data.nbJoueurs);
-    for (int i = 0; i < init_jeu_data.nbJoueurs; i++) {
-        printf("Joueur n%d, nom : %s\n", i + 1, init_jeu_data.nomJoueurs[i]);
-    }
-    printf("Taille de la carte : %d\n", init_jeu_data.mapTaille);
-    char c = ' ';
-    scanf("%c", &c);
-    if (c != ' '){
-        fflush(stdin);
-    }
-    else print_init_jeu();
-}
-
 void menu_commandes() {
     print_banquise_game();
     printf("Les controles sont les suivants :\n"
-           "- Z Q S D pour se déplacer avec le personnage\n"
+           "- Z Q S D pour se deplacer avec le personnage\n"
            "- A COMPLETER\n"); //TODO Completer
     char c = ' ';
     scanf("%c", &c);
@@ -96,14 +82,20 @@ void menu_parametre() {
         temp = 4;
     }
     init_jeu_data.nbJoueurs = temp;
+    char** charArray;
+    charArray =  malloc(init_jeu_data.nbJoueurs * sizeof(char*));
+    for (int i = 0; i < init_jeu_data.nbJoueurs; i++) {
+        charArray[i] = (char*)malloc(50*sizeof(char));
+    }
     for (int i = 0; i < init_jeu_data.nbJoueurs; i++) {
         print_banquise_game();
-        //init_jeu_data.couleursJoueurs[i] = i;
+        fflush(stdin);
         char nom[50];
         printf("Entrez le nom du joueur %d :\n", i + 1);
         scanf("%s", nom);
-        init_jeu_data.nomJoueurs[i] = nom; // TODO Faire un malloc je suppose car ne fonctionne pas pour l'instant
+        strcpy(charArray[i], nom);
     }
+    init_jeu_data.nomJoueurs = charArray;
     print_banquise_game();
     printf("Choix de la taille de la banquise\n"
            "\n"
@@ -199,10 +191,36 @@ void init_jeu_aux() {
     init_jeu_select_menu();
 }
 
+T_vec char_to_t_vec(char c){
+    T_vec result;
+    switch (c){
+        case 'Z':
+            result.dx = 0;
+            result.dy = 1;
+            break;
+        case 'Q':
+            result.dx = -1;
+            result.dy = 0;
+            break;
+        case 'S':
+            result.dx = 0;
+            result.dy = -1;
+            break;
+        case 'D':
+            result.dx = 1;
+            result.dy = 0;
+            break;
+        default:
+            result.dx = 0;
+            result.dy = 0;
+            break;
+    }
+    return result;
+}
 
 T_banquise init_jeu() {
     init_jeu_aux();
-    T_banquise banquise = create_banquise(25, init_jeu_data.nbJoueurs);
+    T_banquise banquise = create_banquise(init_jeu_data.mapTaille, init_jeu_data.nbJoueurs);
     T_joueur *joueur = create_list_joueur(banquise, init_jeu_data.nbJoueurs);
     return banquise;
 }
@@ -215,6 +233,24 @@ int main() {
     MoveWindow(wh, 0, 0, 1000, 1000, TRUE); // Agrandissement de la taille de la console
     affiche_banquise(banquise);
     printf("Chemin : %d\n", chemin_exist(banquise, position_depart(banquise)));
+    // Boucle principale de jeu
+    while (banquise.nombre_joueur > 0)
+    {
+        for (int i = 0; i < banquise.nombre_joueur; i++){
+            char input;
+            T_vec vec;
+            bool joue;
+            do {
+                for (int j = 0; j < init_jeu_data.nbJoueurs; j++){
+                    printf("joueur %d : %s\n", j + 1, init_jeu_data.nomJoueurs[j]);
+                }
+                scanf("%c", &input);
+                vec = char_to_t_vec(input);
+                joue = false;
+            }
+            while (joue);
+        }
+    }
     free(banquise.tab);
     /* Code Ines */
 
