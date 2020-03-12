@@ -266,12 +266,12 @@ T_pos joueur_position(T_banquise banquise, T_pos position_depart) {
 /* Initialise la liste des joueurs
  * nbJoueurs = nombre de joueurs
  * */
-T_joueur *create_list_joueur(T_banquise banquise, int nbJoueurs) {
+T_joueur *create_list_joueur(T_banquise banquise, T_init_jeu init_jeu_data) {
     T_joueur *joueur;
-    joueur = (T_joueur *) malloc(nbJoueurs * sizeof(T_joueur));
+    joueur = (T_joueur *) malloc(init_jeu_data.nbJoueurs * sizeof(T_joueur));
     T_pos depart = position_depart(banquise);
-    for (int i = 0; i < nbJoueurs; i++) {
-        strcpy(joueur[i].nom, "joueur");
+    for (int i = 0; i < init_jeu_data.nbJoueurs; i++) {
+        strcpy(joueur[i].nom, init_jeu_data.nomJoueurs[i]);
         joueur[i].couleur = i;
         joueur[i].id = i;
         joueur[i].vecteur.dx = 0;
@@ -288,49 +288,49 @@ T_joueur *create_list_joueur(T_banquise banquise, int nbJoueurs) {
 }
 
 
-void remp_banquise_tab_edge(T_case **tab, int taille){
+void remp_banquise_tab_edge(T_case **tab, int taille) {
     int **search = create_tab_chemin(taille);
-    for (int i = 0; i < taille; i++){
-        for (int j = 0; j < taille; j++){
-            if (tab[i][j].type_case == 0){
+    for (int i = 0; i < taille; i++) {
+        for (int j = 0; j < taille; j++) {
+            if (tab[i][j].type_case == 0) {
                 int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
-                if (i + 1 < taille){
-                    if (tab[i + 1][j].type_case == 1){
+                if (i + 1 < taille) {
+                    if (tab[i + 1][j].type_case == 1) {
                         r1 = 1;
                     }
                 }
-                if (i - 1 >= 0){
-                    if (tab[i - 1][j].type_case == 1){
+                if (i - 1 >= 0) {
+                    if (tab[i - 1][j].type_case == 1) {
                         r2 = 1;
                     }
                 }
-                if ( j + 1 < taille ){
-                    if (tab[i][j + 1].type_case == 1){
+                if (j + 1 < taille) {
+                    if (tab[i][j + 1].type_case == 1) {
                         r3 = 1;
                     }
                 }
-                if (j - 1 >= 0){
-                    if (tab[i][j - 1].type_case == 1){
+                if (j - 1 >= 0) {
+                    if (tab[i][j - 1].type_case == 1) {
                         r4 = 1;
                     }
                 }
-                if (r1 || r2 || r3 || r4){
+                if (r1 || r2 || r3 || r4) {
                     search[i][j] = 1;
                 }
             }
         }
     }
-    for (int i = 0; i < taille; i++){
+    for (int i = 0; i < taille; i++) {
         for (int j = 0; j < taille; j++) {
-            if (search[i][j] == 1 && rand()%2 == 0){
+            if (search[i][j] == 1 && rand() % 2 == 0) {
                 tab[i][j].type_case = 1;
             }
         }
     }
 }
 
-void debug_position(T_banquise banquise){
-    for (int i = 0; i < banquise.nombre_joueur; i++){
+void debug_affichage(T_banquise banquise) {
+    for (int i = 0; i < banquise.nombre_joueur; i++) {
         fprintf(stdout, "joueur %d\t\t", i + 1);
     }
     fprintf(stdout, "\n");
@@ -342,6 +342,15 @@ void debug_position(T_banquise banquise){
         fprintf(stdout, "vec : %d %d\t\t", banquise.joueurs[i].vecteur.dx, banquise.joueurs[i].vecteur.dy);
     }
     fprintf(stdout, "\n");
+}
+
+bool is_partie_finie(T_banquise banquise) {
+    T_pos arrive = position_arrive(banquise);
+    if (banquise.tab[arrive.posx][arrive.posy].joueur == NULL) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /* Code Ines */
@@ -420,13 +429,11 @@ void move_j_aux(T_banquise banquise, int joueur) {
 int pos_j_valide(T_banquise *banquise, int p) {
     int i = banquise->joueurs[p].position.posx + banquise->joueurs[p].vecteur.dx;
     int j = banquise->joueurs[p].position.posy + banquise->joueurs[p].vecteur.dy;
-    if (i < 0 || i >= banquise->taille || j < 0 || j >= banquise->taille){
+    if (i < 0 || i >= banquise->taille || j < 0 || j >= banquise->taille) {
         return 0;
-    }
-    else if (banquise->tab[i][j].but == arrive || banquise->tab[i][j].type_case == eau || banquise->tab[i][j].joueur != NULL) {
+    } else if (banquise->tab[i][j].type_case == eau || banquise->tab[i][j].joueur != NULL) {
         return 0;
-    }
-    else {
+    } else {
         return 1;
     }
 }
@@ -441,7 +448,7 @@ void mettre_case_j_null(T_banquise banquise, int joueur) {
 void move_tour(T_banquise banquise, int joueur) {
     T_pos pos_joueur = banquise.joueurs[joueur].position;
     T_vec vec_joueur = banquise.joueurs[joueur].vecteur;
-    if (pos_j_valide(&banquise, joueur) == 1){
+    if (pos_j_valide(&banquise, joueur) == 1) {
         T_pos new_pos;
         new_pos.posx = pos_joueur.posx + vec_joueur.dx;
         new_pos.posy = pos_joueur.posy + vec_joueur.dy;

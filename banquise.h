@@ -77,9 +77,10 @@ int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **sea
 char T_but_to_char(T_but objet);
 char T_case_to_char(T_type_case c);
 T_pos joueur_position(T_banquise banquise, T_pos position_depart);
-T_joueur *create_list_joueur(T_banquise banquise, int nbJoueurs);
+T_joueur *create_list_joueur(T_banquise banquise, T_init_jeu init_jeu_data);
 void remp_banquise_tab_edge(T_case **tab, int taille);
-void debug_position(T_banquise banquise);
+void debug_affichage(T_banquise banquise);
+bool is_partie_finie(T_banquise banquise);
 
 /* Code Ines */
 
