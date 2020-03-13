@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <limits.h>
-#include <sys/time.h>
 #include <windows.h>
 #include <stdbool.h>
 
@@ -45,10 +43,9 @@ T_banquise create_banquise(int taille, int joueurs) {
     T_banquise banquise;
     banquise.taille = taille;
     banquise.nombre_joueur = joueurs;
-    do{
+    do {
         banquise.tab = create_tab(taille);
-    }
-    while (chemin_exist(banquise, position_depart(banquise)) == 0);
+    } while (chemin_exist(banquise, position_depart(banquise)) == 0);
     return banquise;
 }
 
@@ -287,10 +284,8 @@ T_joueur *create_list_joueur(T_banquise banquise, T_init_jeu init_jeu_data) {
         joueur[i].position = pos_joueur;
         banquise.tab[pos_joueur.posx][pos_joueur.posy].joueur = &joueur[i];
     }
-
     return joueur;
 }
-
 
 void remp_banquise_tab_edge(T_case **tab, int taille) {
     int **search = create_tab_chemin(taille);
@@ -367,7 +362,6 @@ T_case **alloue(int n) {
     }
     return tab;
 }
-
 
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
     for (int i = x - 1; i <= x + 1; i++) {
@@ -500,13 +494,13 @@ void rechauffement_climatique(T_banquise banquise) {
     }
     for (int i = 0; i < banquise.taille; ++i) {
         for (int j = 0; j < banquise.taille; ++j) {
-            if(search[i][j] == 1 && banquise.tab[i][j].joueur == NULL && banquise.tab[i][j].but == 2 && banquise.tab[i][j].objet == 6 && rand()%100 < FONTE_GLACE){
+            if (search[i][j] == 1 && banquise.tab[i][j].joueur == NULL && banquise.tab[i][j].but == 2 &&
+                banquise.tab[i][j].objet == 6 && rand() % 100 < FONTE_GLACE) {
                 banquise.tab[i][j].type_case = 0;
             }
         }
     }
 }
-
 
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);

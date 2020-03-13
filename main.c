@@ -48,9 +48,9 @@ void menu_commandes() {
            "  = Eau\n"
            "1/2/3/4 = Joueur\n"); //TODO Completer
     char c = ' ';
+    fflush(stdin);
     scanf("%c", &c);
     if (c != ' '){
-        fflush(stdin);
         init_jeu_data.statusMenu = 1;
     }
     else {
@@ -62,9 +62,9 @@ void menu_regles() {
     print_banquise_game();
     printf("Des regles vraiment interessantes et claires\n"); //TODO Completer
     char c = ' ';
+    fflush(stdin);
     scanf("%c", &c);
     if (c != ' '){
-        fflush(stdin);
         init_jeu_data.statusMenu = 1;
     }
     else {
@@ -93,9 +93,9 @@ void menu_parametre() {
     }
     for (int i = 0; i < init_jeu_data.nbJoueurs; i++) {
         print_banquise_game();
-        fflush(stdin);
         char nom[50];
         printf("Entrez le nom du joueur %d :\n", i + 1);
+        fflush(stdin);
         scanf("%s", nom);
         strcpy(charArray[i], nom);
     }
@@ -105,6 +105,7 @@ void menu_parametre() {
            "\n"
            "Compris entre 10 et 40\n");
     int taille;
+    fflush(stdin);
     scanf("%d", &taille);
     if (taille > 40) {
         taille = 40;
