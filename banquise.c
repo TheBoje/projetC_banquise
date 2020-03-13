@@ -9,6 +9,8 @@
 
 #include "banquise.h"
 
+#define FONTE_GLACE 5
+
 /* Code Louis */
 
 /* Initialise le random pour la session
@@ -464,43 +466,42 @@ void move_tour(T_banquise banquise, int joueur) {
     }
 }
 
-void rechauffement_climatique(T_banquise *banquise) {
-    int i, j;
-    int z;
-    for (i = 0; i < banquise->taille; i++) {
-        for (j = 0; j < banquise->taille; j++) {
-            banquise->tab[i][j].joueur = NULL;
-            banquise->tab[i][j].but = defaut;
-            banquise->tab[i][j].objet = vide;
+void rechauffement_climatique(T_banquise banquise) {
+    int **search = create_tab_chemin(banquise.taille);
+    for (int i = 0; i < banquise.taille; i++) {
+        for (int j = 0; j < banquise.taille; j++) {
+            if (banquise.tab[i][j].type_case == 1) {
+                int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
+                if (i + 1 < banquise.taille) {
+                    if (banquise.tab[i + 1][j].type_case == 0) {
+                        r1 = 1;
+                    }
+                }
+                if (i - 1 >= 0) {
+                    if (banquise.tab[i - 1][j].type_case == 0) {
+                        r2 = 1;
+                    }
+                }
+                if (j + 1 < banquise.taille) {
+                    if (banquise.tab[i][j + 1].type_case == 0) {
+                        r3 = 1;
+                    }
+                }
+                if (j - 1 >= 0) {
+                    if (banquise.tab[i][j - 1].type_case == 0) {
+                        r4 = 1;
+                    }
+                }
+                if (r1 || r2 || r3 || r4) {
+                    search[i][j] = 1;
+                }
+            }
         }
     }
-    for (z = 0; z < 2 * (banquise->taille); z++) {
-        i = rand() % banquise->taille;
-        j = rand() % banquise->taille;
-        if (banquise->tab[i][j].type_case == eau) {
-            if (j - 1 < banquise->taille && j - 1 >= 0) {
-                banquise->tab[i][j - 1].type_case = eau;
-                banquise->tab[i][j - 1].joueur = NULL;
-                banquise->tab[i][j - 1].but = defaut;
-                banquise->tab[i][j - 1].objet = vide;
-            }
-            if (j + 1 < banquise->taille && j + 1 >= 0) {
-                banquise->tab[i][j + 1].type_case = eau;
-                banquise->tab[i][j + 1].joueur = NULL;
-                banquise->tab[i][j + 1].but = defaut;
-                banquise->tab[i][j + 1].objet = vide;
-            }
-            if (i - 1 < banquise->taille && i - 1 >= 0) {
-                banquise->tab[i - 1][j].type_case = eau;
-                banquise->tab[i - 1][j].joueur = NULL;
-                banquise->tab[i - 1][j].but = defaut;
-                banquise->tab[i - 1][j].objet = vide;
-            }
-            if (i + 1 < banquise->taille && i + 1 >= 0) {
-                banquise->tab[i + 1][j].type_case = eau;
-                banquise->tab[i + 1][j].joueur = NULL;
-                banquise->tab[i + 1][j].but = defaut;
-                banquise->tab[i + 1][j].objet = vide;
+    for (int i = 0; i < banquise.taille; ++i) {
+        for (int j = 0; j < banquise.taille; ++j) {
+            if(search[i][j] == 1 && banquise.tab[i][j].joueur == NULL && banquise.tab[i][j].but == 2 && banquise.tab[i][j].objet == 6 && rand()%100 < FONTE_GLACE){
+                banquise.tab[i][j].type_case = 0;
             }
         }
     }

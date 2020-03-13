@@ -96,7 +96,7 @@ void move_j_aux(T_banquise banquise, int joueur);
 int pos_j_valide(T_banquise *banquise, int p);
 void mettre_case_j_null(T_banquise banquise, int joueur);
 void move_tour(T_banquise banquise, int joueur);
-void rechauffement_climatique(T_banquise *banquise);
+void rechauffement_climatique(T_banquise banquise);
 void Color(int couleurDuTexte, int couleurDeFond);
 
 #endif // BANQUISE_H_INCLUDED

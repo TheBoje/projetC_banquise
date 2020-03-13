@@ -240,7 +240,6 @@ int main() {
     HWND wh = GetConsoleWindow(); // Récupération de la console windows dans laquelle le jeu est affiché
     MoveWindow(wh, 0, 0, 1000, 1000, TRUE); // Agrandissement de la taille de la console
     affiche_banquise(banquise);
-    //printf("Chemin : %d\n", chemin_exist(banquise, position_depart(banquise)));
     int nbTours = 0;
     bool statusPartie = true;
     // Boucle principale de jeu
@@ -262,6 +261,7 @@ int main() {
                 break;
             }
         }
+        rechauffement_climatique(banquise);
         nbTours += 1;
     }
     print_banquise_game();
