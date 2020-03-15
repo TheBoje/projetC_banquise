@@ -501,6 +501,59 @@ void rechauffement_climatique(T_banquise banquise) {
         }
     }
 }
+// il faut aussi rajouter ces tests
+//banquise.tab[new_pos.posx][new_pos.posy].objet != rocher
+//&& banquise.tab[i-1][j].objet != marteau_manche
+
+void move_glacon(T_banquise banquise, int joueur)
+{
+    T_pos pos = banquise.joueurs[joueur].position;
+    T_vec vec = banquise.joueurs[joueur].vecteur;
+    T_pos new_pos;
+    new_pos.posx = pos.posx + vec.dx;
+    new_pos.posy = pos.posy + vec.dy;
+
+	while( new_pos.posx>0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
+	         && banquise.tab[new_pos.posx][new_pos.posy].objet != resort
+             && banquise.tab[new_pos.posx][new_pos.posy].type_case==glace)
+	      {
+                  banquise.tab[new_pos.posx][new_pos.posy].objet=glacon;
+				  banquise.tab[pos.posx][pos.posy].objet=vide;
+				  banquise.tab[new_pos.posx][new_pos.posy].joueur=NULL;
+				  pos = new_pos;
+				  new_pos.posx = new_pos.posx + vec.dx;
+                  new_pos.posy = new_pos.posy + vec.dy;
+		  }
+// si il touche un ressort il se deplace dans le sens inverse
+				if( new_pos.posx>0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
+				   && banquise.tab[new_pos.posx][new_pos.posy].objet == resort)
+				   {
+				   vec.dx = -1*vec.dx;
+				   vec.dy = -1*vec.dy;
+
+               while( new_pos.posx>0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
+                          && banquise.tab[new_pos.posx][new_pos.posy].type_case==glace)
+	            {
+                       banquise.tab[new_pos.posx][new_pos.posy].objet=glacon;
+				       banquise.tab[pos.posx][pos.posy].objet=vide;
+				       banquise.tab[new_pos.posx][new_pos.posy].joueur=NULL;
+				       pos = new_pos;
+				       new_pos.posx = new_pos.posx + vec.dx;
+                       new_pos.posy = new_pos.posy + vec.dy;
+		        }
+                } // si il arrive sur une case d'eau il agrandit la banquise.
+                if( new_pos.posx>0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
+				   && banquise.tab[new_pos.posx][new_pos.posy].type_case==eau )
+                  {
+				   banquise.tab[new_pos.posx][new_pos.posy].type_case=glace;
+                   banquise.tab[pos.posx][pos.posy].objet=vide;
+
+                  }
+}
+
+
+
+
 
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
