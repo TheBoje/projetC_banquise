@@ -30,6 +30,7 @@ T_case **create_tab(int taille) {
     remp_banquise_tab(tab, taille);
     choisir_case_depart(tab, taille);
     choisir_case_arrive(tab, taille);
+    init_glacon(tab, taille);
     return tab;
 }
 
@@ -552,8 +553,20 @@ void move_glacon(T_banquise banquise, int joueur)
 }
 
 
+void init_glacon(T_case **tab, int taille) {
+    int i, j, l;
 
+    for (l = 0; l<7; l++){
+    i = rand() % taille;
+    j = rand() % taille;
+    while( tab[i][j].type_case == eau && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+        i = rand() % taille;
+        j = rand() % taille;
+    }
+    tab[i][j].objet = glacon;
+}
 
+}
 
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
