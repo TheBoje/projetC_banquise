@@ -7,7 +7,8 @@
 
 #include "banquise.h"
 
-#define FONTE_GLACE 5
+#define FONTE_GLACE 1
+#define NB_GLACON 15
 
 /* Code Louis */
 
@@ -18,6 +19,63 @@
 void init_random() {
     int seed = time(NULL);
     srand(seed);
+}
+
+T_vec char_to_t_vec(char c){
+    T_vec result;
+    switch (c){
+        case 'z':
+            result.dx = -1;
+            result.dy = 0;
+            break;
+        case 'q':
+            result.dx = 0;
+            result.dy = -1;
+            break;
+        case 's':
+            result.dx = 1;
+            result.dy = 0;
+            break;
+        case 'd':
+            result.dx = 0;
+            result.dy = 1;
+            break;
+        default:
+            result.dx = 0;
+            result.dy = 0;
+            break;
+    }
+    return result;
+}
+
+void print_banquise_game() {
+    system("@cls||clear");
+    printf(" ____                          _             ____                      \n"
+           "| __ )  __ _ _ __   __ _ _   _(_)___  ___   / ___| __ _ _ __ ___   ___ \n"
+           "|  _ \\ / _` | '_ \\ / _` | | | | / __|/ _ \\ | |  _ / _` | '_ ` _ \\ / _ \\\n"
+           "| |_) | (_| | | | | (_| | |_| | \\__ \\  __/ | |_| | (_| | | | | | |  __/\n"
+           "|____/ \\__,_|_| |_|\\__, |\\__,_|_|___/\\___|  \\____|\\__,_|_| |_| |_|\\___|\n"
+           "                      |_|                                              \n"
+           "\n");
+}
+
+void affiche_banquise(T_banquise banquise) {
+    print_banquise_game();
+    int i, j;
+    for (i = 0; i < banquise.taille; i++) {
+        for (j = 0; j < banquise.taille; j++) {
+            if (banquise.tab[i][j].joueur != NULL) {
+                fprintf(stdout, " %d ", banquise.tab[i][j].joueur->id + 1);
+            } else if (banquise.tab[i][j].but != defaut) {
+                fprintf(stdout, " %c ", T_but_to_char(banquise.tab[i][j].but));
+            } else if (banquise.tab[i][j].objet != vide) {
+                fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
+            } else {
+                fprintf(stdout, " %c ", T_case_to_char(banquise.tab[i][j].type_case));
+            }
+        }
+        fprintf(stdout, "\n");
+    }
 }
 
 /* Créé le tableau de jeu de T_banquise (tab)
@@ -356,6 +414,44 @@ bool is_partie_finie(T_banquise banquise) {
     }
 }
 
+void gestion_joueur(T_banquise banquise, int ID_joueur){
+    printf("Joueur %d input :\n", ID_joueur+1);
+    char input;
+    T_vec vec;
+    fflush(stdin);
+    scanf("%c", &input);
+    vec = char_to_t_vec(input);
+    banquise.joueurs[ID_joueur].vecteur = vec;
+    T_joueur joueur = banquise.joueurs[ID_joueur];
+    T_pos pos_joueur = joueur.position;
+    T_vec vec_joueur = joueur.vecteur;
+    if (pos_j_valide(banquise, ID_joueur) == 1) {
+        switch(banquise.tab[pos_joueur.posx + vec_joueur.dx][pos_joueur.posy + vec_joueur.dy].objet){
+            case 0: // glacon
+                move_glacon(banquise, ID_joueur);
+                break;
+            case 1: // resort
+                break;
+            case 2: // marteau_tete
+                break;
+            case 3: // marteau_manche
+                break;
+            case 4: // rocher
+                break;
+            case 5: // piege
+                break;
+            default: // 6 - vide
+                deplacer_joueur(banquise, ID_joueur);
+                break;
+        }
+    }
+    else {
+        affiche_banquise(banquise);
+        debug_affichage(banquise);
+        gestion_joueur(banquise, ID_joueur);
+    }
+}
+
 /* Code Ines */
 
 T_case **alloue(int n) {
@@ -428,12 +524,12 @@ void move_j_aux(T_banquise banquise, int joueur) {
 }
 
 // dire si la nouvelle case du joueur est valide
-int pos_j_valide(T_banquise *banquise, int p) {
-    int i = banquise->joueurs[p].position.posx + banquise->joueurs[p].vecteur.dx;
-    int j = banquise->joueurs[p].position.posy + banquise->joueurs[p].vecteur.dy;
-    if (i < 0 || i >= banquise->taille || j < 0 || j >= banquise->taille) {
+int pos_j_valide(T_banquise banquise, int joueur) {
+    int i = banquise.joueurs[joueur].position.posx + banquise.joueurs[joueur].vecteur.dx;
+    int j = banquise.joueurs[joueur].position.posy + banquise.joueurs[joueur].vecteur.dy;
+    if (i < 0 || i >= banquise.taille || j < 0 || j >= banquise.taille) {
         return 0;
-    } else if (banquise->tab[i][j].type_case == eau || banquise->tab[i][j].joueur != NULL) {
+    } else if (banquise.tab[i][j].type_case == eau || banquise.tab[i][j].joueur != NULL) {
         return 0;
     } else {
         return 1;
@@ -447,21 +543,19 @@ void mettre_case_j_null(T_banquise banquise, int joueur) {
 }
 
 // faire passer les joueurs un par un
-void move_tour(T_banquise banquise, int joueur) {
+void deplacer_joueur(T_banquise banquise, int joueur) {
     T_pos pos_joueur = banquise.joueurs[joueur].position;
     T_vec vec_joueur = banquise.joueurs[joueur].vecteur;
-    if (pos_j_valide(&banquise, joueur) == 1) {
-        T_pos new_pos;
-        new_pos.posx = pos_joueur.posx + vec_joueur.dx;
-        new_pos.posy = pos_joueur.posy + vec_joueur.dy;
-        T_vec vec_null;
-        vec_null.dx = 0;
-        vec_null.dy = 0;
-        move_j_aux(banquise, joueur);
-        mettre_case_j_null(banquise, joueur);
-        banquise.joueurs[joueur].position = new_pos;
-        banquise.joueurs[joueur].vecteur = vec_null;
-    }
+    T_pos new_pos;
+    new_pos.posx = pos_joueur.posx + vec_joueur.dx;
+    new_pos.posy = pos_joueur.posy + vec_joueur.dy;
+    T_vec vec_null;
+    vec_null.dx = 0;
+    vec_null.dy = 0;
+    move_j_aux(banquise, joueur);
+    mettre_case_j_null(banquise, joueur);
+    banquise.joueurs[joueur].position = new_pos;
+    banquise.joueurs[joueur].vecteur = vec_null;
 }
 
 void rechauffement_climatique(T_banquise banquise) {
@@ -505,103 +599,103 @@ void rechauffement_climatique(T_banquise banquise) {
         }
     }
 }
-// il faut aussi rajouter ces tests
-//banquise.tab[new_pos.posx][new_pos.posy].objet != rocher
-//&& banquise.tab[i-1][j].objet != marteau_manche
 
-void move_glacon(T_banquise banquise, int joueur)
-{
+/* il faut aussi rajouter ces tests
+ * banquise.tab[new_pos.posx][new_pos.posy].objet != rocher
+ * && banquise.tab[i-1][j].objet != marteau_manche
+ */
+void move_glacon(T_banquise banquise, int joueur) {
     T_pos pos = banquise.joueurs[joueur].position;
     T_vec vec = banquise.joueurs[joueur].vecteur;
     T_pos new_pos;
     new_pos.posx = pos.posx + vec.dx;
     new_pos.posy = pos.posy + vec.dy;
 
-	while( new_pos.posx>0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
-	         && banquise.tab[new_pos.posx][new_pos.posy].objet != resort
-             && banquise.tab[new_pos.posx][new_pos.posy].type_case==glace)
-	      {
-                  banquise.tab[new_pos.posx][new_pos.posy].objet=glacon;
-				  banquise.tab[pos.posx][pos.posy].objet=vide;
-				  banquise.tab[new_pos.posx][new_pos.posy].joueur=NULL;
-				  pos = new_pos;
-				  new_pos.posx = new_pos.posx + vec.dx;
-                  new_pos.posy = new_pos.posy + vec.dy;
-		  }
+    while (new_pos.posx > 0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
+           && banquise.tab[new_pos.posx][new_pos.posy].objet != resort
+           && banquise.tab[new_pos.posx][new_pos.posy].type_case == glace) {
+        banquise.tab[new_pos.posx][new_pos.posy].objet = glacon;
+        banquise.tab[pos.posx][pos.posy].objet = vide;
+        banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
+        pos = new_pos;
+        new_pos.posx = new_pos.posx + vec.dx;
+        new_pos.posy = new_pos.posy + vec.dy;
+    }
 // si il touche un ressort il se deplace dans le sens inverse
-				if( new_pos.posx>0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
-				   && banquise.tab[new_pos.posx][new_pos.posy].objet == resort)
-				   {
-				   vec.dx = -1*vec.dx;
-				   vec.dy = -1*vec.dy;
+    if (new_pos.posx > 0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
+        && banquise.tab[new_pos.posx][new_pos.posy].objet == resort) {
+        vec.dx = -1 * vec.dx;
+        vec.dy = -1 * vec.dy;
 
-               while( new_pos.posx>0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
-                          && banquise.tab[new_pos.posx][new_pos.posy].type_case==glace)
-	            {
-                       banquise.tab[new_pos.posx][new_pos.posy].objet=glacon;
-				       banquise.tab[pos.posx][pos.posy].objet=vide;
-				       banquise.tab[new_pos.posx][new_pos.posy].joueur=NULL;
-				       pos = new_pos;
-				       new_pos.posx = new_pos.posx + vec.dx;
-                       new_pos.posy = new_pos.posy + vec.dy;
-		        }
-                } // si il arrive sur une case d'eau il agrandit la banquise.
-                if( new_pos.posx>0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
-				   && banquise.tab[new_pos.posx][new_pos.posy].type_case==eau )
-                  {
-				   banquise.tab[new_pos.posx][new_pos.posy].type_case=glace;
-                   banquise.tab[pos.posx][pos.posy].objet=vide;
-
-                  }
+        while (new_pos.posx > 0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
+               && banquise.tab[new_pos.posx][new_pos.posy].type_case == glace) {
+            banquise.tab[new_pos.posx][new_pos.posy].objet = glacon;
+            banquise.tab[pos.posx][pos.posy].objet = vide;
+            banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
+            pos = new_pos;
+            new_pos.posx = new_pos.posx + vec.dx;
+            new_pos.posy = new_pos.posy + vec.dy;
+        }
+    } // si il arrive sur une case d'eau il agrandit la banquise.
+    if (new_pos.posx > 0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
+        && banquise.tab[new_pos.posx][new_pos.posy].type_case == eau) {
+        banquise.tab[new_pos.posx][new_pos.posy].type_case = glace;
+        banquise.tab[pos.posx][pos.posy].objet = vide;
+    }
 }
 
 
 void init_glacon(T_case **tab, int taille) {
-    int i, j, l;
+    int i, j;
 
-    for (l = 0; l<7; l++){
-    i = rand() % taille;
-    j = rand() % taille;
-    while( tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+    for (int l = 0; l < NB_GLACON; l++) {
         i = rand() % taille;
         j = rand() % taille;
+        while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+               tab[i][j].but != defaut) {
+            i = rand() % taille;
+            j = rand() % taille;
+        }
+        tab[i][j].objet = glacon;
     }
-    tab[i][j].objet = glacon;
-}
 
 }
-void init_ressort(T_case **tab, int taille){
-int i, j;
+
+void init_ressort(T_case **tab, int taille) {
+    int i, j;
     i = rand() % taille;
     j = rand() % taille;
-    while( tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+    while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+           tab[i][j].but != defaut) {
         i = rand() % taille;
         j = rand() % taille;
     }
     tab[i][j].objet = resort;
 }
-void init_piege(T_case **tab, int taille){
-int i, j;
+
+void init_piege(T_case **tab, int taille) {
+    int i, j;
     i = rand() % taille;
     j = rand() % taille;
-    while( tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+    while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+           tab[i][j].but != defaut) {
         i = rand() % taille;
         j = rand() % taille;
     }
     tab[i][j].objet = piege;
 }
-void init_rocher(T_case **tab, int taille){
-int i, j;
+
+void init_rocher(T_case **tab, int taille) {
+    int i, j;
     i = rand() % taille;
     j = rand() % taille;
-    while( tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+    while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+           tab[i][j].but != defaut) {
         i = rand() % taille;
         j = rand() % taille;
     }
     tab[i][j].objet = rocher;
 }
-
-
 
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);

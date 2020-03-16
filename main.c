@@ -8,33 +8,17 @@
 
 T_init_jeu init_jeu_data;
 
-void print_banquise_game() {
-    system("@cls||clear");
-    printf(" ____                          _             ____                      \n"
-           "| __ )  __ _ _ __   __ _ _   _(_)___  ___   / ___| __ _ _ __ ___   ___ \n"
-           "|  _ \\ / _` | '_ \\ / _` | | | | / __|/ _ \\ | |  _ / _` | '_ ` _ \\ / _ \\\n"
-           "| |_) | (_| | | | | (_| | |_| | \\__ \\  __/ | |_| | (_| | | | | | |  __/\n"
-           "|____/ \\__,_|_| |_|\\__, |\\__,_|_|___/\\___|  \\____|\\__,_|_| |_| |_|\\___|\n"
-           "                      |_|                                              \n"
-           "\n");
-}
-
-void affiche_banquise(T_banquise banquise) {
+void menu_exit(T_banquise banquise){
     print_banquise_game();
-    int i, j;
-    for (i = 0; i < banquise.taille; i++) {
-        for (j = 0; j < banquise.taille; j++) {
-            if (banquise.tab[i][j].joueur != NULL) {
-                fprintf(stdout, " %d ", banquise.tab[i][j].joueur->id + 1);
-            } else if (banquise.tab[i][j].but != defaut) {
-                fprintf(stdout, " %c ", T_but_to_char(banquise.tab[i][j].but));
-            } else if (banquise.tab[i][j].objet != vide) {
-                fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
-            } else {
-                fprintf(stdout, " %c ", T_case_to_char(banquise.tab[i][j].type_case));
-            }
-        }
-        fprintf(stdout, "\n");
+    T_joueur gagnant;
+    T_pos arrive = position_arrive(banquise);
+    gagnant = *banquise.tab[arrive.posx][arrive.posy].joueur;
+    fprintf(stdout, "Le gagnant est le joueur %s ! Felicitations !\n", gagnant.nom);
+    char c;
+    fflush(stdin);
+    scanf("%c", &c);
+    if (c != 'd' && c != 's' && c != 'q' && c != 'z'){
+        exit(1);
     }
 }
 
@@ -196,38 +180,14 @@ void init_jeu_aux() {
     init_jeu_select_menu();
 }
 
-T_vec char_to_t_vec(char c){
-    T_vec result;
-    switch (c){
-        case 'z':
-            result.dx = -1;
-            result.dy = 0;
-            break;
-        case 'q':
-            result.dx = 0;
-            result.dy = -1;
-            break;
-        case 's':
-            result.dx = 1;
-            result.dy = 0;
-            break;
-        case 'd':
-            result.dx = 0;
-            result.dy = 1;
-            break;
-        default:
-            result.dx = 0;
-            result.dy = 0;
-            break;
-    }
-    return result;
-}
-
 T_banquise init_jeu() {
     init_jeu_aux();
     T_banquise banquise = create_banquise(init_jeu_data.mapTaille, init_jeu_data.nbJoueurs);
     T_joueur *joueur = create_list_joueur(banquise, init_jeu_data);
     banquise.joueurs = joueur;
+    HWND wh = GetConsoleWindow(); // Récupération de la console windows dans laquelle le jeu est affiché
+    MoveWindow(wh, 0, 0, 1920, 1080, TRUE); // Agrandissement de la taille de la console
+    affiche_banquise(banquise);
     return banquise;
 }
 
@@ -238,9 +198,6 @@ int main() {
     while (chemin_exist(banquise, position_depart(banquise)) == 0){
         banquise.tab = create_tab(init_jeu_data.mapTaille);
     }
-    HWND wh = GetConsoleWindow(); // Récupération de la console windows dans laquelle le jeu est affiché
-    MoveWindow(wh, 0, 0, 1000, 1000, TRUE); // Agrandissement de la taille de la console
-    affiche_banquise(banquise);
     int nbTours = 0;
     bool statusPartie = true;
     // Boucle principale de jeu
@@ -248,15 +205,8 @@ int main() {
     {
         for (int i = 0; i < banquise.nombre_joueur; i++){
             affiche_banquise(banquise);
-            char input;
-            T_vec vec;
             debug_affichage(banquise);
-            printf("Joueur %d input :\n", i+1);
-            fflush(stdin);
-            scanf("%c", &input);
-            vec = char_to_t_vec(input);
-            banquise.joueurs[i].vecteur = vec;
-            move_tour(banquise, i);
+            gestion_joueur(banquise, i);
             statusPartie = is_partie_finie(banquise);
             if (statusPartie == false){
                 break;
@@ -265,18 +215,7 @@ int main() {
         rechauffement_climatique(banquise);
         nbTours += 1;
     }
-    print_banquise_game();
-    T_joueur gagnant;
-    T_pos arrive = position_arrive(banquise);
-    gagnant = *banquise.tab[arrive.posx][arrive.posy].joueur;
-    fprintf(stdout, "Le gagnant est le joueur %s ! Felicitations !\n", gagnant.nom);
-    char c;
-    fflush(stdin);
-    scanf("%c", &c);
-    if (c != 'd' && c != 's' && c != 'q' && c != 'z'){
-        exit(1);
-    }
+    menu_exit(banquise);
     free(banquise.tab);
-
     return 0;
 }
