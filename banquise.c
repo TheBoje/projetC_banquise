@@ -31,6 +31,9 @@ T_case **create_tab(int taille) {
     choisir_case_depart(tab, taille);
     choisir_case_arrive(tab, taille);
     init_glacon(tab, taille);
+    init_ressort(tab, taille);
+    init_piege(tab, taille);
+    init_rocher(tab, taille);
     return tab;
 }
 
@@ -559,7 +562,7 @@ void init_glacon(T_case **tab, int taille) {
     for (l = 0; l<7; l++){
     i = rand() % taille;
     j = rand() % taille;
-    while( tab[i][j].type_case == eau && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+    while( tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
         i = rand() % taille;
         j = rand() % taille;
     }
@@ -567,6 +570,38 @@ void init_glacon(T_case **tab, int taille) {
 }
 
 }
+void init_ressort(T_case **tab, int taille){
+int i, j;
+    i = rand() % taille;
+    j = rand() % taille;
+    while( tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+        i = rand() % taille;
+        j = rand() % taille;
+    }
+    tab[i][j].objet = resort;
+}
+void init_piege(T_case **tab, int taille){
+int i, j;
+    i = rand() % taille;
+    j = rand() % taille;
+    while( tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+        i = rand() % taille;
+        j = rand() % taille;
+    }
+    tab[i][j].objet = piege;
+}
+void init_rocher(T_case **tab, int taille){
+int i, j;
+    i = rand() % taille;
+    j = rand() % taille;
+    while( tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut) {
+        i = rand() % taille;
+        j = rand() % taille;
+    }
+    tab[i][j].objet = rocher;
+}
+
+
 
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);

@@ -100,5 +100,8 @@ void rechauffement_climatique(T_banquise banquise);
 void move_glacon(T_banquise banquise, int joueur);
 void Color(int couleurDuTexte, int couleurDeFond);
 void init_glacon(T_case **tab, int taille);
+void init_ressort(T_case **tab, int taille);
+void init_piege(T_case **tab, int taille);
+void init_rocher(T_case **tab, int taille);
 
 #endif // BANQUISE_H_INCLUDED
