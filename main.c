@@ -22,6 +22,14 @@ void menu_exit(T_banquise banquise){
     }
 }
 
+void fullscreen()
+{
+    keybd_event(VK_MENU,0x38,0,0);
+    keybd_event(VK_RETURN,0x1c,0,0);
+    keybd_event(VK_RETURN,0x1c,KEYEVENTF_KEYUP,0);
+    keybd_event(VK_MENU,0x38,KEYEVENTF_KEYUP,0);
+}
+
 void menu_commandes() {
     print_banquise_game();
     printf("Les controles sont les suivants :\n"
@@ -185,8 +193,7 @@ T_banquise init_jeu() {
     T_banquise banquise = create_banquise(init_jeu_data.mapTaille, init_jeu_data.nbJoueurs);
     T_joueur *joueur = create_list_joueur(banquise, init_jeu_data);
     banquise.joueurs = joueur;
-    HWND wh = GetConsoleWindow(); // Récupération de la console windows dans laquelle le jeu est affiché
-    MoveWindow(wh, 0, 0, 1920, 1080, TRUE); // Agrandissement de la taille de la console
+    fullscreen();
     affiche_banquise(banquise);
     return banquise;
 }

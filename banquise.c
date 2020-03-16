@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#define WINVER 0x0500
 #include <windows.h>
 #include <stdbool.h>
 

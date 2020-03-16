@@ -6,6 +6,7 @@
 #define PROJETC_BANQUISE_MAIN_H
 
 void menu_exit(T_banquise banquise);
+void fullscreen();
 void menu_commandes();
 void menu_regles();
 void menu_parametre();
