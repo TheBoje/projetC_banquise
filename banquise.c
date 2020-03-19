@@ -699,38 +699,53 @@ void move_glacon(T_banquise banquise, int joueur) {
     T_pos new_pos;
     new_pos.posx = pos.posx + vec.dx;
     new_pos.posy = pos.posy + vec.dy;
-    while (new_pos.posx > 0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
-           && banquise.tab[new_pos.posx][new_pos.posy].objet != resort
-           && banquise.tab[new_pos.posx][new_pos.posy].type_case == glace) {
-        banquise.tab[new_pos.posx][new_pos.posy].objet = glacon;
-        banquise.tab[pos.posx][pos.posy].objet = vide;
-        banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
-        pos = new_pos;
-        new_pos.posx = new_pos.posx + vec.dx;
-        new_pos.posy = new_pos.posy + vec.dy;
-    }
-// si il touche un ressort il se deplace dans le sens inverse
-    if (new_pos.posx > 0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
-        && banquise.tab[new_pos.posx][new_pos.posy].objet == resort) {
-        vec.dx = -1 * vec.dx;
-        vec.dy = -1 * vec.dy;
 
-        while (new_pos.posx > 0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
-               && banquise.tab[new_pos.posx][new_pos.posy].type_case == glace) {
-            banquise.tab[new_pos.posx][new_pos.posy].objet = glacon;
+    while (new_pos.posx >= 0 && new_pos.posx < banquise.taille && new_pos.posy >= 0 && new_pos.posy < banquise.taille)
+	      {
+
+		    if(  banquise.tab[new_pos.posx][new_pos.posy].objet == rocher && banquise.tab[new_pos.posx][new_pos.posy].objet == piege
+			&&  banquise.tab[new_pos.posx][new_pos.posy].objet == glacon)
+			{
+			break;
+			}
+			if( banquise.tab[new_pos.posx][new_pos.posy].objet == resort)
+			         {
+			           vec.dx = -1 * vec.dx;
+                       vec.dy = -1 * vec.dy;
+
+			         }
+
+                if (banquise.tab[new_pos.posx][new_pos.posy].type_case == eau)
+			{
+			banquise.tab[new_pos.posx][new_pos.posy].type_case = glace;
             banquise.tab[pos.posx][pos.posy].objet = vide;
-            banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
-            pos = new_pos;
-            new_pos.posx = new_pos.posx + vec.dx;
-            new_pos.posy = new_pos.posy + vec.dy;
-        }
-    } // si il arrive sur une case d'eau il agrandit la banquise.
-    if (new_pos.posx > 0 && new_pos.posx < banquise.taille && new_pos.posy > 0 && new_pos.posy < banquise.taille
-        && banquise.tab[new_pos.posx][new_pos.posy].type_case == eau) {
-        banquise.tab[new_pos.posx][new_pos.posy].type_case = glace;
-        banquise.tab[pos.posx][pos.posy].objet = vide;
-    }
+			break;
+			}
+			  if(banquise.tab[new_pos.posx][new_pos.posy].objet==vide){
+
+				banquise.tab[new_pos.posx][new_pos.posy].objet = glacon;
+                banquise.tab[pos.posx][pos.posy].objet = vide;
+				}
+				if (banquise.tab[new_pos.posx][new_pos.posy].joueur != NULL)
+				{
+				    if (banquise.tab[new_pos.posx][new_pos.posy].joueur != &(banquise.joueurs[joueur]))
+				  {
+
+                  banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
+				  banquise.joueurs[joueur].score.nb_victime++;
+				  }else banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
+				}
+                pos = new_pos;
+                new_pos.posx = new_pos.posx + vec.dx;
+                new_pos.posy = new_pos.posy + vec.dy;
+
+
+
+			}
 }
+
+
+
 
 void init_glacon(T_case **tab, int taille) {
     int i, j;
