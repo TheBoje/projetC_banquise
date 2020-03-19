@@ -10,10 +10,13 @@
 
 #include "banquise.h"
 
-#define FONTE_GLACE 5
+#define FONTE_GLACE 5 // 0.5% de chances de fonte par tour pour chaque glace adjacent à de l'eau
 #define NB_GLACON 15
 
 /* Code Louis */
+/* TODO commande pour placer un rocher, pour le casser et stop le glacon quand il arrive contre un rocher
+ * TODO placer le marteau et le manche du marteaux, et les interactions qui en découlent
+ */
 
 /* Initialise le random pour la session
  * A lancer une fois par jeu
@@ -429,48 +432,67 @@ bool is_partie_finie(T_banquise banquise) {
     }
 }
 
+bool is_vec(char input) {
+    if (input == 'q' || input == 'z' || input == 's' || input == 'd') {
+        return TRUE;
+    }
+    else {
+        return FALSE;
+    }
+}
+
 void gestion_joueur(T_banquise banquise, int ID_joueur) {
     printf("Joueur %d input :\n", ID_joueur + 1);
     char input;
-    T_vec vec;
     fflush(stdin);
     scanf("%c", &input);
-    vec = char_to_t_vec(input);
-    banquise.joueurs[ID_joueur].vecteur = vec;
-    T_joueur joueur = banquise.joueurs[ID_joueur];
-    T_pos pos_joueur = joueur.position;
-    T_vec vec_joueur = joueur.vecteur;
-    if (banquise.joueurs[ID_joueur].piege == 1){
-        banquise.joueurs[ID_joueur].piege = 0;
-    } else if (pos_j_valide(banquise, ID_joueur) == 1) {
-        switch (banquise.tab[pos_joueur.posx + vec_joueur.dx][pos_joueur.posy + vec_joueur.dy].objet) {
-            case 0: // glacon
-                banquise.joueurs[ID_joueur].score.nb_glacon += 1;
-                move_glacon(banquise, ID_joueur);
-                deplacer_joueur(banquise, ID_joueur);
-                break;
-            case 1: // resort
-                break;
-            case 2: // marteau_tete
-                break;
-            case 3: // marteau_manche
-                break;
-            case 4: // rocher
-                break;
-            case 5: // piege
-                piege_joueur(banquise, ID_joueur);
-                banquise.joueurs[ID_joueur].score.distance += 1;
-                deplacer_joueur(banquise, ID_joueur);
-                break;
-            default: // 6 - vide
-                banquise.joueurs[ID_joueur].score.distance += 1;
-                deplacer_joueur(banquise, ID_joueur);
-                break;
+    if (is_vec(input)){
+        T_vec vec = char_to_t_vec(input);
+        banquise.joueurs[ID_joueur].vecteur = vec;
+        T_joueur joueur = banquise.joueurs[ID_joueur];
+        T_pos pos_joueur = joueur.position;
+        T_vec vec_joueur = joueur.vecteur;
+        if (banquise.joueurs[ID_joueur].piege == 1){
+            banquise.joueurs[ID_joueur].piege = 0;
+        } else if (pos_j_valide(banquise, ID_joueur) == 1) {
+            switch (banquise.tab[pos_joueur.posx + vec_joueur.dx][pos_joueur.posy + vec_joueur.dy].objet) {
+                case 0: // glacon
+                    banquise.joueurs[ID_joueur].score.nb_glacon += 1;
+                    move_glacon(banquise, ID_joueur);
+                    deplacer_joueur(banquise, ID_joueur);
+                    break;
+                case 1: // resort
+                    break;
+                case 2: // marteau_tete
+                    break;
+                case 3: // marteau_manche
+                    break;
+                case 4: // rocher
+                    break;
+                case 5: // piege
+                    piege_joueur(banquise, ID_joueur);
+                    banquise.joueurs[ID_joueur].score.distance += 1;
+                    deplacer_joueur(banquise, ID_joueur);
+                    break;
+                default: // 6 - vide
+                    banquise.joueurs[ID_joueur].score.distance += 1;
+                    deplacer_joueur(banquise, ID_joueur);
+                    break;
+            }
+        } else {
+            affiche_banquise(banquise);
+            debug_affichage(banquise);
+            gestion_joueur(banquise, ID_joueur);
         }
-    } else {
-        affiche_banquise(banquise);
-        debug_affichage(banquise);
-        gestion_joueur(banquise, ID_joueur);
+    }
+    else if (input == 'f'){
+        printf("\nDirection pour placer le rocher\n");
+        char input_vec;
+        fflush(stdin);
+        scanf("%c", &input_vec);
+        T_vec vec = char_to_t_vec(input_vec);
+        banquise.joueurs[ID_joueur].vecteur = vec;
+        place_rocher(banquise, ID_joueur);
     }
 }
 
@@ -497,6 +519,20 @@ void piege_joueur(T_banquise banquise, int ID_joueur){
     new_pos.posy = pos.posy + vec.dy;
     banquise.tab[new_pos.posx][new_pos.posy].objet = vide;
     banquise.joueurs[ID_joueur].piege = 1;
+}
+
+void place_rocher(T_banquise banquise, int ID_joueur){
+    T_pos pos = banquise.joueurs[ID_joueur].position;
+    T_vec vec = banquise.joueurs[ID_joueur].vecteur;
+    T_pos pos_rocher;
+    pos_rocher.posx = pos.posx + vec.dx;
+    pos_rocher.posy = pos.posy + vec.dy;
+    banquise.joueurs[ID_joueur].vecteur.dx = 0;
+    banquise.joueurs[ID_joueur].vecteur.dy = 0;
+    T_case case_rocher = banquise.tab[pos_rocher.posx][pos_rocher.posy];
+    if (case_rocher.joueur == NULL && case_rocher.objet == vide && case_rocher.type_case == glace && case_rocher.but == defaut){
+        banquise.tab[pos_rocher.posx][pos_rocher.posy].objet = rocher;
+    }
 }
 
 /* Code Ines */
@@ -695,7 +731,6 @@ void move_glacon(T_banquise banquise, int joueur) {
         banquise.tab[pos.posx][pos.posy].objet = vide;
     }
 }
-
 
 void init_glacon(T_case **tab, int taille) {
     int i, j;
