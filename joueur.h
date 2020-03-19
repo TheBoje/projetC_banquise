@@ -52,6 +52,7 @@ typedef struct // Definition du T_joueur, regroupe les caracteristiques du joueu
     T_pos position;
     T_vec vecteur;
     T_score score;
+    int piege;
 } T_joueur;
 
 
