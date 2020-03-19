@@ -23,7 +23,7 @@ char T_objet_to_char(T_objet objet) {
             result = 'R';
             break;
         case 5: // Piege
-            result = 'P';
+            result = '*';
             break;
         case 6: // Vide
             result = ' ';
