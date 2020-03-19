@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+
 #define WINVER 0x0500
+
 #include <windows.h>
 #include <stdbool.h>
 
@@ -22,9 +24,9 @@ void init_random() {
     srand(seed);
 }
 
-T_vec char_to_t_vec(char c){
+T_vec char_to_t_vec(char c) {
     T_vec result;
-    switch (c){
+    switch (c) {
         case 'z':
             result.dx = -1;
             result.dy = 0;
@@ -106,6 +108,7 @@ T_banquise create_banquise(int taille, int joueurs) {
     T_banquise banquise;
     banquise.taille = taille;
     banquise.nombre_joueur = joueurs;
+    banquise.tours = 0;
     do {
         banquise.tab = create_tab(taille);
     } while (chemin_exist(banquise, position_depart(banquise)) == 0);
@@ -404,6 +407,12 @@ void debug_affichage(T_banquise banquise) {
         fprintf(stdout, "vec : %d %d\t\t", banquise.joueurs[i].vecteur.dx, banquise.joueurs[i].vecteur.dy);
     }
     fprintf(stdout, "\n");
+    for (int i = 0; i < banquise.nombre_joueur; i++) {
+        fprintf(stdout, "score : %d %d %d\t\t", banquise.joueurs[i].score.distance,
+                banquise.joueurs[i].score.nb_victime, banquise.joueurs[i].score.nb_glacon);
+    }
+    fprintf(stdout, "\n");
+    fprintf(stdout, "tours : %d\n", banquise.tours);
 }
 
 bool is_partie_finie(T_banquise banquise) {
@@ -415,8 +424,8 @@ bool is_partie_finie(T_banquise banquise) {
     }
 }
 
-void gestion_joueur(T_banquise banquise, int ID_joueur){
-    printf("Joueur %d input :\n", ID_joueur+1);
+void gestion_joueur(T_banquise banquise, int ID_joueur) {
+    printf("Joueur %d input :\n", ID_joueur + 1);
     char input;
     T_vec vec;
     fflush(stdin);
@@ -427,7 +436,8 @@ void gestion_joueur(T_banquise banquise, int ID_joueur){
     T_pos pos_joueur = joueur.position;
     T_vec vec_joueur = joueur.vecteur;
     if (pos_j_valide(banquise, ID_joueur) == 1) {
-        switch(banquise.tab[pos_joueur.posx + vec_joueur.dx][pos_joueur.posy + vec_joueur.dy].objet){
+        banquise.joueurs[ID_joueur].score.distance += 1;
+        switch (banquise.tab[pos_joueur.posx + vec_joueur.dx][pos_joueur.posy + vec_joueur.dy].objet) {
             case 0: // glacon
                 move_glacon(banquise, ID_joueur);
                 break;
@@ -445,12 +455,26 @@ void gestion_joueur(T_banquise banquise, int ID_joueur){
                 deplacer_joueur(banquise, ID_joueur);
                 break;
         }
-    }
-    else {
+    } else {
         affiche_banquise(banquise);
         debug_affichage(banquise);
         gestion_joueur(banquise, ID_joueur);
     }
+}
+
+void remove_player(T_banquise banquise, int joueur) {
+    T_joueur *j;
+    j = (T_joueur *) malloc((banquise.nombre_joueur - 1) * sizeof(T_joueur));
+    int compteur = 0;
+    for (int i = 0; i < banquise.nombre_joueur; i++) {
+        if (i != joueur) {
+            j[compteur] = banquise.joueurs[i];
+            compteur += 1;
+        }
+    }
+    banquise.nombre_joueur -= 1;
+    free(banquise.joueurs);
+    banquise.joueurs = j;
 }
 
 /* Code Ines */
@@ -566,22 +590,26 @@ void rechauffement_climatique(T_banquise banquise) {
             if (banquise.tab[i][j].type_case == 1) {
                 int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
                 if (i + 1 < banquise.taille) {
-                    if (banquise.tab[i + 1][j].type_case == 0) {
+                    if (banquise.tab[i + 1][j].type_case == 0 && banquise.tab[i + 1][j].objet == vide &&
+                        banquise.tab[i + 1][j].but == defaut && banquise.tab[i + 1][j].joueur == NULL) {
                         r1 = 1;
                     }
                 }
                 if (i - 1 >= 0) {
-                    if (banquise.tab[i - 1][j].type_case == 0) {
+                    if (banquise.tab[i - 1][j].type_case == 0 && banquise.tab[i - 1][j].objet == vide &&
+                        banquise.tab[i - 1][j].but == defaut && banquise.tab[i - 1][j].joueur == NULL) {
                         r2 = 1;
                     }
                 }
                 if (j + 1 < banquise.taille) {
-                    if (banquise.tab[i][j + 1].type_case == 0) {
+                    if (banquise.tab[i][j + 1].type_case == 0 && banquise.tab[i][j + 1].objet == vide &&
+                        banquise.tab[i][j + 1].but == defaut && banquise.tab[i][j + 1].joueur == NULL) {
                         r3 = 1;
                     }
                 }
                 if (j - 1 >= 0) {
-                    if (banquise.tab[i][j - 1].type_case == 0) {
+                    if (banquise.tab[i][j - 1].type_case == 0 && banquise.tab[i][j - 1].objet == vide &&
+                        banquise.tab[i][j - 1].but == defaut && banquise.tab[i][j - 1].joueur == NULL) {
                         r4 = 1;
                     }
                 }
@@ -650,13 +678,11 @@ void init_glacon(T_case **tab, int taille) {
     int i, j;
 
     for (int l = 0; l < NB_GLACON; l++) {
-        i = rand() % taille;
-        j = rand() % taille;
-        while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
-               tab[i][j].but != defaut) {
+        do {
             i = rand() % taille;
             j = rand() % taille;
-        }
+        } while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+                 tab[i][j].but != defaut);
         tab[i][j].objet = glacon;
     }
 

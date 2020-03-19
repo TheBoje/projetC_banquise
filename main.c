@@ -3,31 +3,33 @@
 #include <string.h>
 #include "banquise.h"
 #include "main.h"
+
 #define WINVER 0x0500
+
 #include <windows.h>
 
 T_init_jeu init_jeu_data;
 
-void menu_exit(T_banquise banquise){
+void menu_exit(T_banquise banquise) {
     print_banquise_game();
     T_joueur gagnant;
     T_pos arrive = position_arrive(banquise);
     gagnant = *banquise.tab[arrive.posx][arrive.posy].joueur;
-    fprintf(stdout, "Le gagnant est le joueur %s ! Felicitations !\n", gagnant.nom);
+    int score_gagnant = 20 * gagnant.score.nb_victime + 5 * gagnant.score.nb_glacon + gagnant.score.distance;
+    fprintf(stdout, "Le gagnant est le joueur %s avec un score de %d ! Felicitations !\n", gagnant.nom, score_gagnant);
     char c;
     fflush(stdin);
     scanf("%c", &c);
-    if (c != 'd' && c != 's' && c != 'q' && c != 'z'){
+    if (c != 'd' && c != 's' && c != 'q' && c != 'z') {
         exit(1);
     }
 }
 
-void fullscreen()
-{
-    keybd_event(VK_MENU,0x38,0,0);
-    keybd_event(VK_RETURN,0x1c,0,0);
-    keybd_event(VK_RETURN,0x1c,KEYEVENTF_KEYUP,0);
-    keybd_event(VK_MENU,0x38,KEYEVENTF_KEYUP,0);
+void fullscreen() {
+    keybd_event(VK_MENU, 0x38, 0, 0);
+    keybd_event(VK_RETURN, 0x1c, 0, 0);
+    keybd_event(VK_RETURN, 0x1c, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_MENU, 0x38, KEYEVENTF_KEYUP, 0);
 }
 
 void menu_commandes() {
@@ -42,10 +44,9 @@ void menu_commandes() {
     char c = ' ';
     fflush(stdin);
     scanf("%c", &c);
-    if (c != ' '){
+    if (c != ' ') {
         init_jeu_data.statusMenu = 1;
-    }
-    else {
+    } else {
         init_jeu_data.statusMenu = 3;
     }
 }
@@ -56,10 +57,9 @@ void menu_regles() {
     char c = ' ';
     fflush(stdin);
     scanf("%c", &c);
-    if (c != ' '){
+    if (c != ' ') {
         init_jeu_data.statusMenu = 1;
-    }
-    else {
+    } else {
         init_jeu_data.statusMenu = 2;
     }
 }
@@ -78,10 +78,10 @@ void menu_parametre() {
         temp = 4;
     }
     init_jeu_data.nbJoueurs = temp;
-    char** charArray;
-    charArray =  malloc(init_jeu_data.nbJoueurs * sizeof(char*));
+    char **charArray;
+    charArray = malloc(init_jeu_data.nbJoueurs * sizeof(char *));
     for (int i = 0; i < init_jeu_data.nbJoueurs; i++) {
-        charArray[i] = (char*)malloc(50*sizeof(char));
+        charArray[i] = (char *) malloc(50 * sizeof(char));
     }
     for (int i = 0; i < init_jeu_data.nbJoueurs; i++) {
         print_banquise_game();
@@ -133,11 +133,10 @@ void init_jeu_select_menu() {
         case 'q':
             exit(1);
         case 'g':
-            if (init_jeu_data.param == 0){
+            if (init_jeu_data.param == 0) {
                 init_jeu_data.statusMenu = 4;
-            }
-            else {
-            init_jeu_data.statusMenu = 0;
+            } else {
+                init_jeu_data.statusMenu = 0;
             }
             break;
         default:
@@ -147,8 +146,8 @@ void init_jeu_select_menu() {
     init_jeu_menu_manager();
 }
 
-void init_jeu_menu_manager(){
-    switch (init_jeu_data.statusMenu){
+void init_jeu_menu_manager() {
+    switch (init_jeu_data.statusMenu) {
         case 0:
             break;
         case 1:
@@ -193,34 +192,31 @@ T_banquise init_jeu() {
     T_banquise banquise = create_banquise(init_jeu_data.mapTaille, init_jeu_data.nbJoueurs);
     T_joueur *joueur = create_list_joueur(banquise, init_jeu_data);
     banquise.joueurs = joueur;
-    fullscreen();
     affiche_banquise(banquise);
     return banquise;
 }
 
-
 int main() {
     /* Code Louis */
+    fullscreen();
     T_banquise banquise = init_jeu();
-    while (chemin_exist(banquise, position_depart(banquise)) == 0){
+    while (chemin_exist(banquise, position_depart(banquise)) == 0) {
         banquise.tab = create_tab(init_jeu_data.mapTaille);
     }
-    int nbTours = 0;
     bool statusPartie = true;
     // Boucle principale de jeu
-    while (banquise.nombre_joueur > 0 && statusPartie)
-    {
-        for (int i = 0; i < banquise.nombre_joueur; i++){
+    while (banquise.nombre_joueur > 0 && statusPartie) {
+        for (int i = 0; i < banquise.nombre_joueur; i++) {
             affiche_banquise(banquise);
             debug_affichage(banquise);
             gestion_joueur(banquise, i);
             statusPartie = is_partie_finie(banquise);
-            if (statusPartie == false){
+            if (statusPartie == false) {
                 break;
             }
         }
         rechauffement_climatique(banquise);
-        nbTours += 1;
+        banquise.tours += 1;
     }
     menu_exit(banquise);
     free(banquise.tab);
