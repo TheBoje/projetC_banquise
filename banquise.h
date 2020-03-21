@@ -111,8 +111,6 @@ bool is_vec(char input);
 
 void gestion_joueur(T_banquise banquise, int ID_joueur);
 
-void remove_player(T_banquise banquise, int joueur);
-
 void piege_joueur(T_banquise banquise, int ID_joueur);
 
 void place_rocher(T_banquise banquise, int ID_joueur);

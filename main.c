@@ -205,14 +205,16 @@ int main() {
     }
     bool statusPartie = true;
     // Boucle principale de jeu
-    while (banquise.nombre_joueur > 0 && statusPartie) {
+    while (statusPartie) {
         for (int i = 0; i < banquise.nombre_joueur; i++) {
-            affiche_banquise(banquise);
-            debug_affichage(banquise);
-            gestion_joueur(banquise, i);
-            statusPartie = is_partie_finie(banquise);
-            if (statusPartie == false) {
-                break;
+            if(banquise.joueurs[i].estEnVie == 1) {
+                affiche_banquise(banquise);
+                debug_affichage(banquise);
+                gestion_joueur(banquise, i);
+                statusPartie = is_partie_finie(banquise);
+                if (statusPartie == false) {
+                    break;
+                }
             }
         }
         rechauffement_climatique(banquise);

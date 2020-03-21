@@ -352,6 +352,7 @@ T_joueur *create_list_joueur(T_banquise banquise, T_init_jeu init_jeu_data) {
         T_pos pos_joueur = joueur_position(banquise, depart);
         joueur[i].position = pos_joueur;
         joueur[i].piege = 0;
+        joueur[i].estEnVie = 1;
         banquise.tab[pos_joueur.posx][pos_joueur.posy].joueur = &joueur[i];
     }
     return joueur;
@@ -420,6 +421,10 @@ void debug_affichage(T_banquise banquise) {
                 banquise.joueurs[i].score.nb_victime, banquise.joueurs[i].score.nb_glacon);
     }
     fprintf(stdout, "\n");
+    for (int i = 0; i < banquise.nombre_joueur; i++) {
+        fprintf(stdout, "En vie : %d \t\t", banquise.joueurs[i].estEnVie);
+    }
+    fprintf(stdout, "\n");
     fprintf(stdout, "tours : %d\n", banquise.tours);
 }
 
@@ -458,7 +463,7 @@ void gestion_joueur(T_banquise banquise, int ID_joueur) {
                 case 0: // glacon
                     banquise.joueurs[ID_joueur].score.nb_glacon += 1;
                     move_glacon(banquise, ID_joueur);
-                   // deplacer_joueur(banquise, ID_joueur);
+                    // deplacer_joueur(banquise, ID_joueur);
                     break;
                 case 1: // resort
                     break;
@@ -492,21 +497,6 @@ void gestion_joueur(T_banquise banquise, int ID_joueur) {
         banquise.joueurs[ID_joueur].vecteur = vec;
         place_rocher(banquise, ID_joueur);
     }
-}
-
-void remove_player(T_banquise banquise, int joueur) {
-    T_joueur *j;
-    j = (T_joueur *) malloc((banquise.nombre_joueur - 1) * sizeof(T_joueur));
-    int compteur = 0;
-    for (int i = 0; i < banquise.nombre_joueur; i++) {
-        if (i != joueur) {
-            j[compteur] = banquise.joueurs[i];
-            compteur += 1;
-        }
-    }
-    banquise.nombre_joueur -= 1;
-    free(banquise.joueurs);
-    banquise.joueurs = j;
 }
 
 void piege_joueur(T_banquise banquise, int ID_joueur) {
@@ -695,51 +685,40 @@ void move_glacon(T_banquise banquise, int joueur) {
     T_pos pos = banquise.joueurs[joueur].position;
     T_vec vec = banquise.joueurs[joueur].vecteur;
     T_pos new_pos;
-    new_pos.posx = pos.posx + vec.dx;
-    new_pos.posy = pos.posy + vec.dy;
+    pos.posx = pos.posx + vec.dx; // Permet de résoudre pas mal de bugs, mais en créé un nouveau : le glacon saute la première case dans la trajectoire.
+    pos.posy = pos.posy + vec.dy;
+    new_pos.posx = pos.posx + 2 * vec.dx;
+    new_pos.posy = pos.posy + 2 * vec.dy;
 
     while (new_pos.posx >= 0 && new_pos.posx < banquise.taille && new_pos.posy >= 0 && new_pos.posy < banquise.taille) {
-
-        if (banquise.tab[new_pos.posx][new_pos.posy].objet == rocher &&
-            banquise.tab[new_pos.posx][new_pos.posy].objet == piege
-            && banquise.tab[new_pos.posx][new_pos.posy].objet == glacon) {
-            break;
-        }
-        else if (banquise.tab[new_pos.posx][new_pos.posy].type_case == eau) {
+        T_case new_case = banquise.tab[new_pos.posx][new_pos.posy];
+        if (new_case.objet == vide && new_case.type_case == glace && new_case.joueur == NULL) {
+            banquise.tab[new_pos.posx][new_pos.posy].objet = glacon;
+            banquise.tab[pos.posx][pos.posy].objet = vide;
+            pos = new_pos;
+            new_pos.posx = new_pos.posx + vec.dx;
+            new_pos.posy = new_pos.posy + vec.dy;
+        } else if (new_case.type_case == eau) {
             banquise.tab[new_pos.posx][new_pos.posy].type_case = glace;
             banquise.tab[pos.posx][pos.posy].objet = vide;
             break;
-        }
-       else{
-            if (banquise.tab[new_pos.posx][new_pos.posy].objet == resort)
-            {
+        } else if (new_case.objet == resort) {
             vec.dx = -1 * vec.dx;
             vec.dy = -1 * vec.dy;
-             }
-
-
-       else if (banquise.tab[new_pos.posx][new_pos.posy].objet == vide)
-        {
-
-            banquise.tab[new_pos.posx][new_pos.posy].objet = glacon;
+        } else if (new_case.objet == rocher || new_case.objet == piege || new_case.objet == glacon) {
+            break;
+        } else if (new_case.joueur != NULL) {
+            banquise.tab[new_pos.posx][new_pos.posy].joueur->estEnVie = 0;
+            banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
             banquise.tab[pos.posx][pos.posy].objet = vide;
+            banquise.joueurs[joueur].score.nb_victime += 1;
+            break;
+        } else {
+            break;
         }
-        if (banquise.tab[new_pos.posx][new_pos.posy].joueur != NULL
-            && banquise.tab[new_pos.posx][new_pos.posy].joueur != &(banquise.joueurs[joueur]))
-                {
-
-                banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
-               // remove_player(banquise, banquise.tab[new_pos.posx][new_pos.posy].joueur->id);
-                banquise.joueurs[joueur].score.nb_victime++;
-                }
-        banquise.tab[new_pos.posx][new_pos.posy].joueur = NULL;
-        pos = new_pos;
-        new_pos.posx = new_pos.posx + vec.dx;
-        new_pos.posy = new_pos.posy + vec.dy;
     }
 }
 
-}
 void init_glacon(T_case **tab, int taille) {
     int i, j;
 
