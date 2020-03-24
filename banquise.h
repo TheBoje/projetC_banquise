@@ -152,4 +152,6 @@ void init_piege(T_case **tab, int taille);
 
 void init_rocher(T_case **tab, int taille);
 
+void init_marteau(T_case **tab, int taille);
+
 #endif // BANQUISE_H_INCLUDED
