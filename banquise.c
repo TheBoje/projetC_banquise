@@ -802,6 +802,21 @@ void init_rocher(T_case **tab, int taille) {
         tab[i][j].objet = rocher;
     }
 }
+void init_marteau(T_case **tab, int taille)
+{
+  int i,j;
+  do{
+   i = rand()%(taille-2)+1;
+   j= rand()%(taille-2)+1;
+   }while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+                 tab[i][j].but != defaut && tab[i][j+1].type_case != glace && tab[i][j+1].objet != vide &&
+                 tab[i][j+1].joueur != NULL && tab[i][j+1].but != defaut  );
+
+    tab[i][j].objet = marteau_manche;
+    tab[i][j+1].objet = marteau_tete;
+
+
+}
 
 void move_m_t(T_banquise banquise, T_vec *vec, T_pos new_pos, T_pos pos) {
     T_pos p1;

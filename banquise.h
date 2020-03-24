@@ -156,6 +156,8 @@ void init_piege(T_case **tab, int taille);
 
 void init_rocher(T_case **tab, int taille);
 
+void init_marteau(T_case **tab, int taille);
+
 void move_m_t(T_banquise banquise, T_vec *vec, T_pos new_pos, T_pos pos);
 
 #endif // BANQUISE_H_INCLUDED
