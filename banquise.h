@@ -115,6 +115,10 @@ void piege_joueur(T_banquise banquise, int ID_joueur);
 
 void place_rocher(T_banquise banquise, int ID_joueur);
 
+int calculer_score(T_banquise banquise, int ID_joueur);
+
+int *classer_joueur(T_banquise banquise);
+
 /* Code Ines */
 T_case **alloue(int n);
 
@@ -151,5 +155,7 @@ void init_ressort(T_case **tab, int taille);
 void init_piege(T_case **tab, int taille);
 
 void init_rocher(T_case **tab, int taille);
+
+void move_m_t(T_banquise banquise, T_vec *vec, T_pos new_pos, T_pos pos);
 
 #endif // BANQUISE_H_INCLUDED

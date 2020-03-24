@@ -12,11 +12,15 @@ T_init_jeu init_jeu_data;
 
 void menu_exit(T_banquise banquise) {
     print_banquise_game();
-    T_joueur gagnant;
-    T_pos arrive = position_arrive(banquise);
-    gagnant = *banquise.tab[arrive.posx][arrive.posy].joueur;
-    int score_gagnant = 20 * gagnant.score.nb_victime + 5 * gagnant.score.nb_glacon + gagnant.score.distance;
-    fprintf(stdout, "Le gagnant est le joueur %s avec un score de %d ! Felicitations !\n", gagnant.nom, score_gagnant);
+    int *classement_joueur = classer_joueur(banquise);
+    for (int i = 0; i < banquise.nombre_joueur; i++){
+       if (i == 0){
+           fprintf(stdout, "Le gagnant est le joueur %s avec un score de %d ! Felicitations !\n", banquise.joueurs[classement_joueur[i]].nom, calculer_score(banquise, classement_joueur[i]));
+       }
+       else {
+           fprintf(stdout, "Le joueur %s a termine %d eme avec un score de %d\n", banquise.joueurs[classement_joueur[i]].nom, i + 1, calculer_score(banquise, classement_joueur[i]));
+       }
+    }
     char c;
     fflush(stdin);
     scanf("%c", &c);
