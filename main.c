@@ -226,5 +226,6 @@ int main() {
     }
     menu_exit(banquise);
     free(banquise.tab);
+    free(banquise.joueurs);
     return 0;
 }
