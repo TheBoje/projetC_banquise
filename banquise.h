@@ -26,7 +26,7 @@ typedef enum // Definition du T_but, enumere les differentes cases speciales. C'
 {
     depart = 0,
     arrive = 1,
-    defaut
+    defaut = 2
 } T_but;
 
 
@@ -124,6 +124,10 @@ int *classer_joueur(T_banquise banquise);
 void tourner_marteau(T_banquise banquise, int sens, T_pos pos_marteau_manche);
 
 int get_rotation_marteau(T_banquise banquise, T_pos pos_marteau_tete, T_pos pos_marteau_manche, T_pos new_pos_marteau_tete);
+
+T_pos trouver_marteau_manche(T_banquise banquise, T_pos pos_marteau_tete);
+
+T_pos trouver_marteau_tete(T_banquise banquise, T_pos pos_marteau_manche);
 
 /* Code Ines */
 T_case **alloue(int n);
