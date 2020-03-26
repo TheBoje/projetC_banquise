@@ -39,12 +39,27 @@ void fullscreen() {
 void menu_commandes() {
     print_banquise_game();
     printf("Les controles sont les suivants :\n"
-           "- Z Q S D pour se deplacer avec le personnage\n"
+           "- les touches Z, Q, S, D  servent à  deplacer les  personnage\n"
+           " Z : se deplacer vers le haut \n"
+           " S : se deplacer vers le bas \n"
+           " Q : se deplacer vers la gauche\n"
+           " D : se deplacer vers la droite \n"
+           " f : permets de pouvoir placer un rocher sur la banquise puis vous devez mettre une position valide\n"
+           "\n"
+           "Sur la banquise on retrouve plusieurs symboles : \n"
            "A = Arrivee\n"
            "D = Depart\n"
-           "* = Banquise\n"
-           "  = Eau\n"
-           "1/2/3/4 = Joueur\n"); //TODO Completer
+           "\n"
+           "* = Banquise ou bien la glace c'est les cases sur lesquels on se depace\n"
+           "  =  Le vide représente l'eau\n"
+           "1/2/3/4 = Les chiffres de un à quatre représente les Joueurs dans l'ordre \n"
+           "\n"
+           "M = Manche du marteau \n"
+           "T = tete du marteau \n"
+           "G = Glacon \n"
+           "X = Ressort\n"
+           "R = Rocher \n"
+           "Attention il y a des Pieges invisibles un peu partout sur la banquise "); //TODO Completer
     char c = ' ';
     fflush(stdin);
     scanf("%c", &c);
@@ -57,7 +72,15 @@ void menu_commandes() {
 
 void menu_regles() {
     print_banquise_game();
-    printf("Des regles vraiment interessantes et claires\n"); //TODO Completer
+    printf("Des regles vraiment interessantes et claires\n"
+           "Les joueurs initialises sur la banquise vont se deplacer tour atour \n"
+           "A chaque tour un joueurs fait un mouvement on utilisant les touches defini dans la section commandes \n"
+           "Une partie prends fin des qu'un joueur arrivent a la case d'arrivee \n"
+           "Si un joueur se deplace sur une case piege il sera bloque pendant un tour\n"
+           "Un joueur peut faire bouger un glacon si il le souhaite \n"
+           "Un glacon en mouvement peut agrandir la banquise ou bien tuer un joueurs\n"
+           "Un ressot inverse le mouvement d'un glacon"
+           "Un marteau peut changer la trajectoire du glacon en mouvement de 90 degres"); //TODO Completer
     char c = ' ';
     fflush(stdin);
     scanf("%c", &c);

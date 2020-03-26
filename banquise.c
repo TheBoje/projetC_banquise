@@ -57,6 +57,7 @@ T_vec char_to_t_vec(char c) {
 
 void print_banquise_game() {
     system("@cls||clear");
+     Color(3,0);
     printf(" ____                          _             ____                      \n"
            "| __ )  __ _ _ __   __ _ _   _(_)___  ___   / ___| __ _ _ __ ___   ___ \n"
            "|  _ \\ / _` | '_ \\ / _` | | | | / __|/ _ \\ | |  _ / _` | '_ ` _ \\ / _ \\\n"
@@ -64,6 +65,7 @@ void print_banquise_game() {
            "|____/ \\__,_|_| |_|\\__, |\\__,_|_|___/\\___|  \\____|\\__,_|_| |_| |_|\\___|\n"
            "                      |_|                                              \n"
            "\n");
+         Color(15,0);
 }
 
 void affiche_banquise(T_banquise banquise) {
@@ -71,18 +73,24 @@ void affiche_banquise(T_banquise banquise) {
     int i, j;
     for (i = 0; i < banquise.taille; i++) {
         for (j = 0; j < banquise.taille; j++) {
+
             if (banquise.tab[i][j].joueur != NULL) {
+                 Color(14,0);
                 fprintf(stdout, " %d ", banquise.tab[i][j].joueur->id + 1);
             } else if (banquise.tab[i][j].but != defaut) {
+                 Color(12,0);
                 fprintf(stdout, " %c ", T_but_to_char(banquise.tab[i][j].but));
             } else if (banquise.tab[i][j].objet != vide) {
+                Color(8,0);
                 fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
             } else {
+                 Color(3,0);
                 fprintf(stdout, " %c ", T_case_to_char(banquise.tab[i][j].type_case));
             }
         }
         fprintf(stdout, "\n");
     }
+  Color(15,0);
 }
 
 /* Créé le tableau de jeu de T_banquise (tab)
