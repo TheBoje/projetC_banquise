@@ -10,7 +10,7 @@
 
 #include "banquise.h"
 
-#define FONTE_GLACE 5 // 0.5% de chances de fonte par tour pour chaque glace adjacent à de l'eau
+#define FONTE_GLACE 1 // 0.5% de chances de fonte par tour pour chaque glace adjacent à de l'eau
 #define NB_GLACON 15
 
 /* Code Louis */
@@ -98,6 +98,7 @@ T_case **create_tab(int taille) {
     init_ressort(tab, taille);
     init_piege(tab, taille);
     init_rocher(tab, taille);
+    init_marteau(tab, taille);
     return tab;
 }
 
@@ -428,6 +429,21 @@ void debug_affichage(T_banquise banquise) {
     fprintf(stdout, "tours : %d\n", banquise.tours);
 }
 
+void debug_case(T_banquise banquise, T_pos pos){
+    int type = 0, but = 0, objet = 0;
+    for (int i = - 1; i<2;i++){
+        for (int j = - 1; j<2; j++){
+            if (pos.posx + i < banquise.taille && pos.posx + i > 0 && pos.posy + j > 0 && pos.posy + j < banquise.taille){
+                T_case c = banquise.tab[pos.posx + i][pos.posy + j];
+                type = c.type_case;
+                but = c.but;
+                objet = c.objet;
+                fprintf(stdout, "%d %d : Type : %d But : %d Objet : %d\n", pos.posx + i, pos.posy + j, type, but, objet);
+            }
+        }
+    }
+}
+
 bool is_partie_finie(T_banquise banquise) {
     T_pos arrive = position_arrive(banquise);
     if (banquise.tab[arrive.posx][arrive.posy].joueur == NULL) {
@@ -448,6 +464,7 @@ bool is_vec(char input) {
 void gestion_joueur(T_banquise banquise, int ID_joueur) {
     printf("Joueur %d input :\n", ID_joueur + 1);
     char input;
+    debug_case(banquise, banquise.joueurs[ID_joueur].position);
     fflush(stdin);
     scanf("%c", &input); // TODO Trouver une autre solution
     if (is_vec(input)) {
@@ -509,7 +526,7 @@ void piege_joueur(T_banquise banquise, int ID_joueur) {
     banquise.joueurs[ID_joueur].piege = 1;
 }
 
-void place_rocher(T_banquise banquise, int ID_joueur) { // TODO Ne pas placer sur une case avec une arrivee ou un depart
+void place_rocher(T_banquise banquise, int ID_joueur) {
     T_pos pos = banquise.joueurs[ID_joueur].position;
     T_vec vec = banquise.joueurs[ID_joueur].vecteur;
     T_pos pos_rocher;
@@ -521,6 +538,9 @@ void place_rocher(T_banquise banquise, int ID_joueur) { // TODO Ne pas placer su
     if (case_rocher.joueur == NULL && case_rocher.objet == vide && case_rocher.type_case == glace &&
         case_rocher.but == defaut) {
         banquise.tab[pos_rocher.posx][pos_rocher.posy].objet = rocher;
+    } else if (case_rocher.joueur == NULL && case_rocher.objet == rocher && case_rocher.type_case == glace &&
+               case_rocher.but == defaut) {
+        banquise.tab[pos_rocher.posx][pos_rocher.posy].objet = vide;
     }
 }
 
@@ -555,6 +575,69 @@ int *classer_joueur(T_banquise banquise) {
         }
     }
     return IDs;
+}
+
+void tourner_marteau(T_banquise banquise, int sens, T_pos pos_marteau_manche) {
+    int i = pos_marteau_manche.posx, j = pos_marteau_manche.posy;
+    if (sens == 0) {
+        if (banquise.tab[i + 1][j].objet == marteau_tete && banquise.tab[i][j + 1].objet == vide && banquise.tab[i][j + 1].joueur == NULL) {
+            banquise.tab[i + 1][j].objet = vide;
+            banquise.tab[i][j + 1].objet = marteau_tete;
+        } else if (banquise.tab[i - 1][j].objet == marteau_tete && banquise.tab[i][j - 1].objet == vide && banquise.tab[i][j - 1].joueur == NULL) {
+            banquise.tab[i - 1][j].objet = vide;
+            banquise.tab[i][j - 1].objet = marteau_tete;
+        } else if (banquise.tab[i][j + 1].objet == marteau_tete && banquise.tab[i - 1][j].objet == vide && banquise.tab[i - 1][j].joueur == NULL) {
+            banquise.tab[i][j + 1].objet = vide;
+            banquise.tab[i - 1][j].objet = marteau_tete;
+        } else if (banquise.tab[i][j - 1].objet == marteau_tete && banquise.tab[i + 1][j].objet == vide && banquise.tab[i + 1][j].joueur == NULL) {
+            banquise.tab[i][j - 1].objet = vide;
+            banquise.tab[i + 1][j].objet = marteau_tete;
+        }
+    } else if (sens == 1) {
+        if (banquise.tab[i + 1][j].objet == marteau_tete && banquise.tab[i][j - 1].objet == vide && banquise.tab[i][j - 1].joueur == NULL) {
+            banquise.tab[i + 1][j].objet = vide;
+            banquise.tab[i][j - 1].objet = marteau_tete;
+        } else if (banquise.tab[i - 1][j].objet == marteau_tete && banquise.tab[i][j - 1].objet == vide && banquise.tab[i][j + 1].joueur == NULL) {
+            banquise.tab[i - 1][j].objet = vide;
+            banquise.tab[i][j + 1].objet = marteau_tete;
+        } else if (banquise.tab[i][j + 1].objet == marteau_tete && banquise.tab[i - 1][j].objet == vide && banquise.tab[i + 1][j].joueur == NULL) {
+            banquise.tab[i][j + 1].objet = vide;
+            banquise.tab[i + 1][j].objet = marteau_tete;
+        } else if (banquise.tab[i][j - 1].objet == marteau_tete && banquise.tab[i + 1][j].objet == vide && banquise.tab[i - 1][j].joueur == NULL) {
+            banquise.tab[i][j - 1].objet = vide;
+            banquise.tab[i - 1][j].objet = marteau_tete;
+        }
+    }
+}
+
+int get_rotation_marteau(T_banquise banquise, T_pos pos_marteau_tete, T_pos pos_marteau_manche, T_pos new_pos_marteau_tete) {
+    int i = pos_marteau_manche.posx, j = pos_marteau_manche.posy;
+    T_pos result;
+    if (banquise.tab[i + 1][j].objet == marteau_tete && banquise.tab[i][j + 1].objet == vide && banquise.tab[i][j + 1].joueur == NULL) {
+        result.posx = i;
+        result.posy = j + 1;
+    } else if (banquise.tab[i - 1][j].objet == marteau_tete && banquise.tab[i][j - 1].objet == vide && banquise.tab[i][j - 1].joueur == NULL) {
+        result.posx = i;
+        result.posy = j - 1;
+    } else if (banquise.tab[i][j + 1].objet == marteau_tete && banquise.tab[i - 1][j].objet == vide && banquise.tab[i - 1][j].joueur == NULL) {
+        result.posx = i - 1;
+        result.posy = j;
+    } else if (banquise.tab[i][j - 1].objet == marteau_tete && banquise.tab[i + 1][j].objet == vide && banquise.tab[i + 1][j].joueur == NULL) {
+        result.posx = i + 1;
+        result.posy = j;
+    }
+    if (new_pos_marteau_tete.posx == result.posx && new_pos_marteau_tete.posy == result.posy) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+T_vec vector_marteau(T_banquise banquise, T_pos pos_glacon, T_pos pos_marteau_tete){
+    T_vec vec;
+    vec.dx = pos_glacon.posx - pos_marteau_tete.posx;
+    vec.dy = pos_glacon.posy - pos_marteau_tete.posy;
+    return vec;
 }
 
 /* Code Ines */
@@ -667,8 +750,7 @@ void rechauffement_climatique(T_banquise banquise) { // TODO chaque glacon a un 
     int **search = create_tab_chemin(banquise.taille);
     for (int i = 0; i < banquise.taille; i++) {
         for (int j = 0; j < banquise.taille; j++) {
-            if (banquise.tab[i][j].type_case == 1 && banquise.tab[i][j].objet == vide &&
-                banquise.tab[i][j].joueur == NULL) {
+            if (banquise.tab[i][j].type_case == 1 && banquise.tab[i][j].objet == 6 && banquise.tab[i][j].joueur == NULL && banquise.tab[i][j].but == 2) {
                 int r1 = 0, r2 = 0, r3 = 0, r4 = 0;
                 if (i + 1 < banquise.taille) {
                     if (banquise.tab[i + 1][j].type_case == 0) {
@@ -702,8 +784,7 @@ void rechauffement_climatique(T_banquise banquise) { // TODO chaque glacon a un 
     }
     for (int i = 0; i < banquise.taille; ++i) {
         for (int j = 0; j < banquise.taille; ++j) {
-            if (search[i][j] == 1 && banquise.tab[i][j].joueur == NULL && banquise.tab[i][j].but == 2 &&
-                banquise.tab[i][j].objet == 6 && rand() % 1000 < FONTE_GLACE) {
+            if (search[i][j] == 1 && (rand() % 1000 < FONTE_GLACE)) {
                 banquise.tab[i][j].type_case = 0;
             }
         }
@@ -715,11 +796,12 @@ void rechauffement_climatique(T_banquise banquise) { // TODO chaque glacon a un 
  * && banquise.tab[i-1][j].objet != marteau_manche
  */
 void move_glacon(T_banquise banquise, int joueur) {
+    affiche_banquise(banquise);
+    debug_affichage(banquise);
     T_pos pos = banquise.joueurs[joueur].position;
     T_vec vec = banquise.joueurs[joueur].vecteur;
     T_pos new_pos;
-    pos.posx = pos.posx +
-               vec.dx; // Permet de résoudre pas mal de bugs, mais en créé un nouveau : le glacon saute la première case dans la trajectoire.
+    pos.posx = pos.posx + vec.dx; // Permet de résoudre pas mal de bugs, mais en créé un nouveau : le glacon saute la première case dans la trajectoire.
     pos.posy = pos.posy + vec.dy; // TODO fix this
     new_pos.posx = pos.posx + 2 * vec.dx;
     new_pos.posy = pos.posy + 2 * vec.dy;
@@ -732,14 +814,50 @@ void move_glacon(T_banquise banquise, int joueur) {
             pos = new_pos;
             new_pos.posx = new_pos.posx + vec.dx;
             new_pos.posy = new_pos.posy + vec.dy;
-        } else if (new_case.type_case == eau) {
+        } else if (new_case.objet == marteau_tete){
+            T_pos temp = new_pos;
+            temp.posx = temp.posx + vec.dx;
+            temp.posy = temp.posy + vec.dy;
+            if (banquise.tab[temp.posx][temp.posy].objet == marteau_manche) {
+                break;
+            }
+            else {
+                T_pos pos_marteau_tete = new_pos;
+                T_pos pos_marteau_manche;
+                temp.posx = temp.posx + vec.dy;
+                temp.posy = temp.posy + vec.dx;
+                pos_marteau_manche = temp;
+                T_pos new_pos_marteau_tete;
+                new_pos_marteau_tete.posx = pos_marteau_manche.posx + vec.dx;
+                new_pos_marteau_tete.posy = pos_marteau_manche.posy + vec.dy;
+                int rotation = get_rotation_marteau(banquise, pos_marteau_tete, pos_marteau_manche, new_pos_marteau_tete);
+                for (int i = 0; i < 3; i++){
+                    tourner_marteau(banquise, rotation, pos_marteau_manche);
+                }
+                if (banquise.tab[pos.posx + 1][pos.posy].objet == marteau_tete){
+                    pos_marteau_tete.posx = pos.posx + 1;
+                    pos_marteau_tete.posy = pos.posy;
+                } else if (banquise.tab[pos.posx - 1][pos.posy].objet == marteau_tete){
+                    pos_marteau_tete.posx = pos.posx - 1;
+                    pos_marteau_tete.posy = pos.posy;
+                } else if (banquise.tab[pos.posx][pos.posy + 1].objet == marteau_tete){
+                    pos_marteau_tete.posx = pos.posx;
+                    pos_marteau_tete.posy = pos.posy + 1;
+                } else if (banquise.tab[pos.posx][pos.posy - 1].objet == marteau_tete){
+                    pos_marteau_tete.posx = pos.posx;
+                    pos_marteau_tete.posy = pos.posy - 1;
+                }
+                vec = vector_marteau(banquise, pos, pos_marteau_tete);
+            }
+        }
+        else if (new_case.type_case == eau) {
             banquise.tab[new_pos.posx][new_pos.posy].type_case = glace;
             banquise.tab[pos.posx][pos.posy].objet = vide;
             break;
         } else if (new_case.objet == resort) {
             vec.dx = -1 * vec.dx;
             vec.dy = -1 * vec.dy;
-        } else if (new_case.objet == rocher || new_case.objet == piege || new_case.objet == glacon) {
+        } else if (new_case.objet == rocher || new_case.objet == piege || new_case.objet == glacon || new_case.objet == marteau_manche) {
             break;
         } else if (new_case.joueur != NULL) {
             banquise.tab[new_pos.posx][new_pos.posy].joueur->estEnVie = 0;
@@ -769,7 +887,7 @@ void init_glacon(T_case **tab, int taille) {
 
 void init_ressort(T_case **tab, int taille) {
     int i, j;
-    for (int l = 0; l < 2 + taille % 10; l++) {
+    for (int l = 0; l < 2 + taille / 10; l++) {
         do {
             i = rand() % taille;
             j = rand() % taille;
@@ -781,7 +899,7 @@ void init_ressort(T_case **tab, int taille) {
 
 void init_piege(T_case **tab, int taille) {
     int i, j;
-    for (int l = 0; l < 2 + taille % 10; l++) {
+    for (int l = 0; l < 2 + taille / 10; l++) {
         do {
             i = rand() % taille;
             j = rand() % taille;
@@ -793,7 +911,7 @@ void init_piege(T_case **tab, int taille) {
 
 void init_rocher(T_case **tab, int taille) {
     int i, j;
-    for (int l = 0; l < 2 + taille % 10; l++) {
+    for (int l = 0; l < 2 + taille / 10; l++) {
         do {
             i = rand() % taille;
             j = rand() % taille;
@@ -802,20 +920,22 @@ void init_rocher(T_case **tab, int taille) {
         tab[i][j].objet = rocher;
     }
 }
-void init_marteau(T_case **tab, int taille)
-{
-  int i,j;
-  do{
-   i = rand()%(taille-2)+1;
-   j= rand()%(taille-2)+1;
-   }while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
-                 tab[i][j].but != defaut && tab[i][j+1].type_case != glace && tab[i][j+1].objet != vide &&
-                 tab[i][j+1].joueur != NULL && tab[i][j+1].but != defaut  );
 
-    tab[i][j].objet = marteau_manche;
-    tab[i][j+1].objet = marteau_tete;
-
-
+void init_marteau(T_case **tab, int taille) {
+    int i, j;
+    for (int l = 0; l < 1 + taille / 10;l++){
+        do {
+            i = rand() % (taille - 3) + 1;
+            j = rand() % (taille - 3) + 1;
+        } while (tab[i][j].type_case != glace && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut
+                 && tab[i + 1][j].type_case != glace && tab[i + 1][j].objet != vide && tab[i + 1][j].joueur != NULL && tab[i + 1][j].but != defaut
+                 && tab[i - 1][j].type_case != glace && tab[i - 1][j].objet != vide && tab[i - 1][j].joueur != NULL && tab[i - 1][j].but != defaut
+                 && tab[i][j + 1].type_case != glace && tab[i][j + 1].objet != vide && tab[i][j + 1].joueur != NULL && tab[i][j + 1].but != defaut
+                 && tab[i][j - 1].type_case != glace && tab[i][j - 1].objet != vide && tab[i][j - 1].joueur != NULL && tab[i][j - 1].but != defaut
+                );
+        tab[i][j].objet = marteau_manche;
+        tab[i][j + 1].objet = marteau_tete;
+    }
 }
 
 void move_m_t(T_banquise banquise, T_vec *vec, T_pos new_pos, T_pos pos) {
@@ -837,7 +957,8 @@ void move_m_t(T_banquise banquise, T_vec *vec, T_pos new_pos, T_pos pos) {
         if (vec->dx != 0) {
             banquise.tab[new_pos.posx][new_pos.posy].objet = vide;// la pos actuelle de la tete est mise à vide
             if (new_pos.posy > p1.posy) {// si la tete est à la droite du manche
-                banquise.tab[pos.posx][pos.posy - 1].objet = marteau_tete;// normalement c'est ici on se retouve la tete après 3/4 DE TOUR
+                banquise.tab[pos.posx][pos.posy -
+                                       1].objet = marteau_tete;// normalement c'est ici on se retouve la tete après 3/4 DE TOUR
                 vec->dx = 1;// bouge vers la droite
                 vec->dy = 0;
             } else {

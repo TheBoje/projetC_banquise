@@ -105,6 +105,8 @@ void remp_banquise_tab_edge(T_case **tab, int taille);
 
 void debug_affichage(T_banquise banquise);
 
+void debug_case(T_banquise banquise, T_pos pos);
+
 bool is_partie_finie(T_banquise banquise);
 
 bool is_vec(char input);
@@ -118,6 +120,10 @@ void place_rocher(T_banquise banquise, int ID_joueur);
 int calculer_score(T_banquise banquise, int ID_joueur);
 
 int *classer_joueur(T_banquise banquise);
+
+void tourner_marteau(T_banquise banquise, int sens, T_pos pos_marteau_manche);
+
+int get_rotation_marteau(T_banquise banquise, T_pos pos_marteau_tete, T_pos pos_marteau_manche, T_pos new_pos_marteau_tete);
 
 /* Code Ines */
 T_case **alloue(int n);
