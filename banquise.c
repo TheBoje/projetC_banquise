@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -718,11 +719,10 @@ void move_glacon(T_banquise banquise, int joueur) {
     T_pos pos = banquise.joueurs[joueur].position;
     T_vec vec = banquise.joueurs[joueur].vecteur;
     T_pos new_pos;
-    pos.posx = pos.posx +
-               vec.dx; // Permet de résoudre pas mal de bugs, mais en créé un nouveau : le glacon saute la première case dans la trajectoire.
+    pos.posx = pos.posx + vec.dx; // Permet de résoudre pas mal de bugs, mais en créé un nouveau :
     pos.posy = pos.posy + vec.dy; // TODO fix this
-    new_pos.posx = pos.posx + 2 * vec.dx;
-    new_pos.posy = pos.posy + 2 * vec.dy;
+    new_pos.posx = pos.posx + vec.dx;
+    new_pos.posy = pos.posy + vec.dy;
 
     while (new_pos.posx >= 0 && new_pos.posx < banquise.taille && new_pos.posy >= 0 && new_pos.posy < banquise.taille) {
         T_case new_case = banquise.tab[new_pos.posx][new_pos.posy];
@@ -732,14 +732,19 @@ void move_glacon(T_banquise banquise, int joueur) {
             pos = new_pos;
             new_pos.posx = new_pos.posx + vec.dx;
             new_pos.posy = new_pos.posy + vec.dy;
+
         } else if (new_case.type_case == eau) {
             banquise.tab[new_pos.posx][new_pos.posy].type_case = glace;
             banquise.tab[pos.posx][pos.posy].objet = vide;
             break;
-        } else if (new_case.objet == resort) {
+        }else if (new_case.objet == resort) {
             vec.dx = -1 * vec.dx;
             vec.dy = -1 * vec.dy;
-        } else if (new_case.objet == rocher || new_case.objet == piege || new_case.objet == glacon) {
+           new_pos.posx = pos.posx +vec.dx;
+           new_pos.posy = pos.posy +vec.dy;
+
+
+        } else if (new_case.objet == rocher || new_case.objet == piege  || new_case.objet == glacon ) {
             break;
         } else if (new_case.joueur != NULL) {
             banquise.tab[new_pos.posx][new_pos.posy].joueur->estEnVie = 0;
