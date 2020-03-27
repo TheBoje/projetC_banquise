@@ -8,8 +8,10 @@
 
 #include <windows.h>
 
-T_init_jeu init_jeu_data;
+T_init_jeu init_jeu_data; // variable globale qui fait tourner le jeu
 
+/* en fin de jeu affiche les stats des joueurs
+*/
 void menu_exit(T_banquise banquise) {
     print_banquise_game();
     int *classement_joueur = classer_joueur(banquise);
@@ -28,14 +30,16 @@ void menu_exit(T_banquise banquise) {
         exit(1);
     }
 }
-
+/* ajuster la taille de l'affichage
+*/
 void fullscreen() {
     keybd_event(VK_MENU, 0x38, 0, 0);
     keybd_event(VK_RETURN, 0x1c, 0, 0);
     keybd_event(VK_RETURN, 0x1c, KEYEVENTF_KEYUP, 0);
     keybd_event(VK_MENU, 0x38, KEYEVENTF_KEYUP, 0);
 }
-
+/* prend en charge l'affichage des commandes
+*/
 void menu_commandes() {
     print_banquise_game();
     printf("Les controles sont les suivants :\n"
@@ -69,7 +73,8 @@ void menu_commandes() {
         init_jeu_data.statusMenu = 3;
     }
 }
-
+/* prend en charge l'affichage des regles du jeu
+*/
 void menu_regles() {
     print_banquise_game();
     printf("Des regles vraiment interessantes et claires\n"
@@ -90,7 +95,8 @@ void menu_regles() {
         init_jeu_data.statusMenu = 2;
     }
 }
-
+/* sert à integrer les parametres du jeu
+*/
 void menu_parametre() {
     print_banquise_game();
     printf("Nombre de joueurs : 1 a 4\n"
@@ -135,7 +141,8 @@ void menu_parametre() {
     init_jeu_data.statusMenu = 1;
     init_jeu_data.param = 1;
 }
-
+/* affiche le menu et les diférentes options possibles en debut de jeu
+*/
 void init_jeu_select_menu() {
     print_banquise_game();
     printf("Liste des menus, appuyez sur la touche correspondante :\n"
@@ -172,7 +179,8 @@ void init_jeu_select_menu() {
     }
     init_jeu_menu_manager();
 }
-
+/* affecte à chaque valeur de statusMenu une fontion du menu
+*/
 void init_jeu_menu_manager() {
     switch (init_jeu_data.statusMenu) {
         case 0:
@@ -197,7 +205,8 @@ void init_jeu_menu_manager() {
             break;
     }
 }
-
+/* Lance le menu du jeu
+*/
 void init_jeu_aux() {
     init_jeu_data.statusMenu = 1; // Status => 0 = joue, 1 = init menu, 2 = regles, 3 = commandes, 4 = parametres
     init_jeu_data.param = 0;
@@ -213,7 +222,8 @@ void init_jeu_aux() {
     }
     init_jeu_select_menu();
 }
-
+/* initialise la partie
+*/
 T_banquise init_jeu() {
     init_jeu_aux();
     T_banquise banquise = create_banquise(init_jeu_data.mapTaille, init_jeu_data.nbJoueurs);
