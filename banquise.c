@@ -22,7 +22,10 @@ void init_random() {
     int seed = time(NULL);
     srand(seed);
 }
-
+/*  transformer un char z,q,s,d on vecteur
+ *   (0,1)(0,-1)(1,0) (-1,0) pour traduire les differentes directions possibles
+ *  complexité : O(1)
+*/
 /*
  * Permet de conventir les input de char en T_vec (int dx, int dy)
  * */
@@ -52,7 +55,8 @@ T_vec char_to_t_vec(char c) {
     }
     return result;
 }
-
+/* Imprime le nom du jeu
+*/
 /* Affiche "BanquiseGame" en haut de l'écran
  * Appelé à chaque actualisation de l'affichage
  * */
@@ -68,7 +72,9 @@ void print_banquise_game() {
            "\n");
     Color(15, 0);
 }
-
+/* Affiche le jeu prends la banquise et l'affiche case par case selon le contenu
+* Complexité : O(taille*taille) -> depends de la taille de la banquise
+*/
 /* Affiche le tableau de jeu de la banquise
  * Les éléments de la case sont affichés par ordre de priorité
  * Joueur > But > Objet > Type_case
@@ -87,8 +93,13 @@ void affiche_banquise(T_banquise banquise) {
                 Color(12, 0);
                 fprintf(stdout, " %c ", T_but_to_char(banquise.tab[i][j].but));
             } else if (banquise.tab[i][j].objet != vide) {
-                Color(8, 0);
+                 if(banquise.tab[i][j].objet == piege){
+                   Color(3,0);
                 fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
+                 } else {
+                Color(8,0);
+                fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
+                 }
             } else {
                 Color(3, 0);
                 fprintf(stdout, " %c ", T_case_to_char(banquise.tab[i][j].type_case));
@@ -103,6 +114,8 @@ void affiche_banquise(T_banquise banquise) {
  * Taille : taille du tableau (taille * taille)
  * Retourne le tableau de T_cases representant la banquise
  * Inclus l'allocation mémoire du tableau, initialisation des cases, et le placement des cases de départ et d'arrivee, et de tous les objets
+ * et le placement des joueurs ainsi que les objets: glaçon, ressort, marteau, piege, rocher et marteau
+ * Complexité: cette fonction fait appel d'autre fonction donc sa complexité depends de la somme totale des autres
  * */
 T_case **create_tab(int taille) {
     T_case **tab = alloue(taille);
@@ -173,7 +186,8 @@ T_pos position_depart(T_banquise banquise) {
 
 /* Permet d'offset une position selon x et y
  * Pos + x (selon x) et Pos + y (selon y)
- * */
+ * Complexité:Constante
+ */
 T_pos offset_pos(T_pos pos, int offx, int offy) {
     pos.posx += offx;
     pos.posy += offy;
@@ -183,7 +197,8 @@ T_pos offset_pos(T_pos pos, int offx, int offy) {
 /* Verifie si la T_pos est dans banquise.tab
  * 0 = n'est pas dans la banquise (out of bounds)
  * 1 = est dans la banquise
- * */
+ *Complexité: Constante
+  */
 int is_in_banquise(T_banquise banquise, T_pos pos) {
     if ((pos.posx < 0)
         || (pos.posy < 0)
@@ -213,8 +228,8 @@ void print_search(int **search, T_banquise banquise) {
 /* Créé le tableau nécessaire à la recherche de chemin dans chemin_exist
  * Taille = taille du tableau retourné. Doit être de la même taille que banquise.taille
  * Alloue l'espace mémoire, et initialise les valeurs à 0
- * Utilisé dans chemin_exist()
- * */
+ * Complexité : O(taille*taille)
+ */
 int **create_tab_chemin(int taille) {
     int **tab = (int **) malloc(taille * sizeof(int *));
     for (int i = 0; i < taille; i++) {
@@ -231,7 +246,8 @@ int **create_tab_chemin(int taille) {
 /* Fonction annexe de chemin_exist_aux
  * Associe la valeur 2 dans search à tous les points qui sont de l'eau dans banquise.taille
  * Permet de gagner de la lisibilité et de reduire le nombre d'opérations dans chemin_exist_aux
- * */
+ * Complexité: O(taille*taille)
+ */
 int **tab_chemin_fill_eau(T_banquise banquise, int **search) {
     for (int i = 0; i < banquise.taille; i++) {
         for (int j = 0; j < banquise.taille; j++) {
@@ -247,7 +263,8 @@ int **tab_chemin_fill_eau(T_banquise banquise, int **search) {
  * 0 = pas de chemin existant
  * 1 = au moins un chemin possible
  * Appelle la fonction récursive chemin_exist_aux()
- * */
+ * Complexité: depend de la complexité de chemain_exist_aux
+*/
 int chemin_exist(T_banquise banquise, T_pos pos) {
     int **search = tab_chemin_fill_eau(banquise, create_tab_chemin(banquise.taille)); // initialise le tableau de recherche
     //print_search(search, banquise);
@@ -263,7 +280,8 @@ int chemin_exist(T_banquise banquise, T_pos pos) {
  * A chaque itération, on cherche si les cases adjascentes sont accessibles, et si oui, si elles sont la case de destination
  * Si une des cases accessible est l'objectif, alors la fonction retourne 1, sinon on retourne 0
  * complexité au pire : O(n²), avec n la taille de la banquise
- * */
+ * Complexité :
+*/
 int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **search) {
     if (search[pos.posx][pos.posy] == 0) {      // Vérification que l'on n'a pas encore cherché dans cette case
         if (pos.posx == pos_arrive.posx && pos.posy == pos_arrive.posy) { // Cas ou la case est l'objectif
@@ -300,7 +318,8 @@ int chemin_exist_aux(T_banquise banquise, T_pos pos, T_pos pos_arrive, int **sea
 }
 
 /* Permet de convertir un T_but en caractères, essentiel pour l'affichage
- * */
+ * Complexité : Constante
+*/
 char T_but_to_char(T_but objet) {
     char result;
     switch (objet) {
@@ -318,7 +337,8 @@ char T_but_to_char(T_but objet) {
 }
 
 /* Permet de convertir une T_case en caractères, essentiel pour l'affichage
- * */
+ * Complexité : Constante
+ */
 char T_case_to_char(T_type_case c) {
     char result;
     switch (c) {
@@ -337,7 +357,8 @@ char T_case_to_char(T_type_case c) {
 
 /* Place le joueur dans une position aléatoire [-2;2] selon x et y de la case de depart
  * Fonction auxilière de create_list_joueur()
- * */
+ * Compléxité: depend du rand()
+*/
 T_pos joueur_position(T_banquise banquise, T_pos position_depart) {
     int l, m;
     T_pos temp;
@@ -354,7 +375,8 @@ T_pos joueur_position(T_banquise banquise, T_pos position_depart) {
 
 /* Initialise la liste des joueurs à partir des données d'initialisation du jeu et de la banquise
  * Complexité O(n)
- * */
+ *Complexité = O(nbJoueurs)
+*/
 T_joueur *create_list_joueur(T_banquise banquise, T_init_jeu init_jeu_data) {
     T_joueur *joueur;
     joueur = (T_joueur *) malloc(init_jeu_data.nbJoueurs * sizeof(T_joueur));
@@ -376,7 +398,9 @@ T_joueur *create_list_joueur(T_banquise banquise, T_init_jeu init_jeu_data) {
     }
     return joueur;
 }
-
+/*Permet de creer la structure de la banquise: case=eau/case=glace
+ *Complexité:
+*/
 /* Créé un tableau de int contenant 1 si la case est de type 'eau' et adjascente a au moins une case de type 'glace'
  * Utilisé pour améliorer la structure de la génération de la banquise
  * */
@@ -420,7 +444,10 @@ void remp_banquise_tab_edge(T_case **tab, int taille) {
         }
     }
 }
-
+/*Affiche pour chaque joueur du jeu sa position,son vecteur, son score
+ * si il est sur un piege et si il est envie et le nombre de tours
+ *Complexité: est O(nb_joueur)
+*/
 /* Affiche l'état des joueurs (position, vecteurs, piège, score, s'il est en vie, et le nombre total de tours)
  * Uniquement affiché pour debug
  * */
@@ -452,7 +479,9 @@ void debug_affichage(T_banquise banquise) {
     fprintf(stdout, "\n");
     fprintf(stdout, "tours : %d\n", banquise.tours);
 }
-
+/* affiche les attributs de chaque case : type, but et objet.
+ * Complexité : 0(taille*taille)
+*/
 void debug_case(T_banquise banquise, T_pos pos) {
     int type = 0, but = 0, objet = 0;
     for (int i = -1; i < 2; i++) {
@@ -467,7 +496,9 @@ void debug_case(T_banquise banquise, T_pos pos) {
         }
     }
 }
-
+/*dit si la partie est fini on non en fonction du nombre de joueur encore vivant
+ * Complexité : O(nombre_joueur)
+*/
 bool is_partie_finie(T_banquise banquise) {
     T_pos arrive = position_arrive(banquise);
     int compteur = 0;
@@ -482,7 +513,9 @@ bool is_partie_finie(T_banquise banquise) {
         return false;
     }
 }
-
+/* dit si un char en entrée est un vecteur de mouvement
+ * Complexité : Constante
+*/
 bool is_vec(char input) {
     if (input == 'q' || input == 'z' || input == 's' || input == 'd') {
         return TRUE;
@@ -490,7 +523,9 @@ bool is_vec(char input) {
         return FALSE;
     }
 }
-
+/*modifie l'emplacement du joueur en prenant en compte les différents attributs et obstacles présents sur la banquise
+ *Complexité : constante
+*/
 void gestion_joueur(T_banquise banquise, int ID_joueur) {
     printf("Joueur %d input :\n", ID_joueur + 1);
     char input;
@@ -543,7 +578,9 @@ void gestion_joueur(T_banquise banquise, int ID_joueur) {
         place_rocher(banquise, ID_joueur);
     }
 }
-
+/*bloque le joueur sur une case pendant un tour si c'est un piege
+ *Complexité: constante
+*/
 void piege_joueur(T_banquise banquise, int ID_joueur) {
     T_pos pos = banquise.joueurs[ID_joueur].position;
     T_vec vec = banquise.joueurs[ID_joueur].vecteur;
@@ -553,7 +590,9 @@ void piege_joueur(T_banquise banquise, int ID_joueur) {
     banquise.tab[new_pos.posx][new_pos.posy].objet = vide;
     banquise.joueurs[ID_joueur].piege = 1;
 }
-
+/*Permet à un joueur de placer un rocher sur la banquise
+ *Complexité : Constante
+*/
 void place_rocher(T_banquise banquise, int ID_joueur) {
     T_pos pos = banquise.joueurs[ID_joueur].position;
     T_vec vec = banquise.joueurs[ID_joueur].vecteur;
@@ -571,7 +610,9 @@ void place_rocher(T_banquise banquise, int ID_joueur) {
         banquise.tab[pos_rocher.posx][pos_rocher.posy].objet = vide;
     }
 }
-
+/* Calucule le score d'un joueur
+ * Complexité : constante
+*/
 int calculer_score(T_banquise banquise, int ID_joueur) {
     if (banquise.joueurs[ID_joueur].estEnVie == 1) {
         return 20 * banquise.joueurs[ID_joueur].score.nb_victime + 5 * banquise.joueurs[ID_joueur].score.nb_glacon +
@@ -581,7 +622,9 @@ int calculer_score(T_banquise banquise, int ID_joueur) {
                banquise.joueurs[ID_joueur].score.distance;
     }
 }
-
+/* Donne l'ordre des joueurs selon leurs score
+ * Complexité : O(nombre_joueur)
+*/
 int *classer_joueur(T_banquise banquise) {
     int *scores;
     int *IDs;
@@ -604,7 +647,9 @@ int *classer_joueur(T_banquise banquise) {
     }
     return IDs;
 }
-
+/* Fait tourner un marteau 3/4 de tour
+ * Complexité : constante
+*/
 void tourner_marteau(T_banquise banquise, int sens, T_pos pos_marteau_manche) {
     int i = pos_marteau_manche.posx, j = pos_marteau_manche.posy;
     if (sens == 0) {
@@ -637,7 +682,9 @@ void tourner_marteau(T_banquise banquise, int sens, T_pos pos_marteau_manche) {
         }
     }
 }
-
+/*
+ *Complexité : Constante
+*/
 int get_rotation_marteau(T_banquise banquise, T_pos pos_marteau_tete, T_pos pos_marteau_manche, T_pos new_pos_marteau_tete) {
     int i = pos_marteau_manche.posx, j = pos_marteau_manche.posy;
     T_pos result;
@@ -660,14 +707,18 @@ int get_rotation_marteau(T_banquise banquise, T_pos pos_marteau_tete, T_pos pos_
         return 1;
     }
 }
-
+/*
+ *Complexité : constante
+*/
 T_vec vector_marteau(T_banquise banquise, T_pos pos_glacon, T_pos pos_marteau_tete) {
     T_vec vec;
     vec.dx = pos_glacon.posx - pos_marteau_tete.posx;
     vec.dy = pos_glacon.posy - pos_marteau_tete.posy;
     return vec;
 }
-
+/*cherche le manche en fonction de la tete du marteau
+ * Complexité : Constante
+*/
 T_pos trouver_marteau_manche(T_banquise banquise, T_pos pos_marteau_tete) {
     T_pos result;
     if (banquise.tab[pos_marteau_tete.posx + 1][pos_marteau_tete.posy].objet == marteau_manche) {
@@ -688,7 +739,9 @@ T_pos trouver_marteau_manche(T_banquise banquise, T_pos pos_marteau_tete) {
         return result;
     } else return pos_marteau_tete;
 }
-
+/* cherche la position de la tete en fonction de la position du manche
+ * Complecité: Constante
+*/
 T_pos trouver_marteau_tete(T_banquise banquise, T_pos pos_marteau_manche) {
     T_pos result;
     if (banquise.tab[pos_marteau_manche.posx + 1][pos_marteau_manche.posy].objet == marteau_tete) {
@@ -711,7 +764,9 @@ T_pos trouver_marteau_tete(T_banquise banquise, T_pos pos_marteau_manche) {
 }
 
 /* Code Ines */
-
+/* Cree l'espace mémoire du tableau
+ * Complexité :O(n)
+ */
 T_case **alloue(int n) {
     int h;
     T_case **tab = (T_case **) malloc(n * sizeof(T_case *));
@@ -720,7 +775,9 @@ T_case **alloue(int n) {
     }
     return tab;
 }
-
+/* Remplie des case du tableau de [x-1,y-1] a [x+1,y+1] de glace
+ * Complexité :O(taille*taille)
+ */
 void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
     for (int i = x - 1; i <= x + 1; i++) {
         for (int j = y - 1; j <= y + 1; j++) {
@@ -730,7 +787,9 @@ void remp_banquise_tab_aux(T_case **tab, int taille, int x, int y) {
         }
     }
 }
-
+/* Remplit par defaut toute les cases du tableau est rajoute de la glace avec remp_banquise_tab_aux
+ * Complexité : O(taille*taille)
+*/
 void remp_banquise_tab(T_case **tab, int taille) {
     int x, y, r;
     r = 2 * taille;
@@ -749,7 +808,9 @@ void remp_banquise_tab(T_case **tab, int taille) {
     }
     remp_banquise_tab_edge(tab, taille);
 }
-
+/* initialise la case de départ alétoirement
+ *Complexité
+*/
 void choisir_case_depart(T_case **tab, int taille) {
     int i, j;
     i = rand() % taille;
@@ -760,7 +821,9 @@ void choisir_case_depart(T_case **tab, int taille) {
     }
     tab[i][j].but = depart;
 }
-
+/* initialise la case d'arrive aléatoirement
+ *Complexité :
+*/
 void choisir_case_arrive(T_case **tab, int taille) {
     int i, j;
     i = rand() % taille;
@@ -771,7 +834,9 @@ void choisir_case_arrive(T_case **tab, int taille) {
     }
     tab[i][j].but = arrive;
 }
-
+/*change la position d'un joueur selon la valeur de son vecteur
+ *Complexité :Constante
+*/
 void move_j_aux(T_banquise banquise, int joueur) {
     T_pos pos = banquise.joueurs[joueur].position;
     T_vec vec = banquise.joueurs[joueur].vecteur;
@@ -781,7 +846,9 @@ void move_j_aux(T_banquise banquise, int joueur) {
     banquise.tab[new_pos.posx][new_pos.posy].joueur = &banquise.joueurs[joueur];
 }
 
-// dire si la nouvelle case du joueur est valide
+/*dire si la nouvelle case du joueur est valide
+ *Complexité : constante
+*/
 int pos_j_valide(T_banquise banquise, int joueur) {
     int i = banquise.joueurs[joueur].position.posx + banquise.joueurs[joueur].vecteur.dx;
     int j = banquise.joueurs[joueur].position.posy + banquise.joueurs[joueur].vecteur.dy;
@@ -794,13 +861,17 @@ int pos_j_valide(T_banquise banquise, int joueur) {
     }
 }
 
-// quand un joueur n'est plus sur une case valide il ne doit plus etre sur la banquise.
+/* quand un joueur n'est plus sur une case valide il ne doit plus etre sur la banquise.
+ * Complexité: constante
+*/
 void mettre_case_j_null(T_banquise banquise, int joueur) {
     T_pos pos = banquise.joueurs[joueur].position;
     banquise.tab[pos.posx][pos.posy].joueur = NULL;
 }
 
-// faire passer les joueurs un par un
+/*faire bouger un joueur d'une case à l'autre
+ * Complexité : constante
+*/
 void deplacer_joueur(T_banquise banquise, int joueur) {
     T_pos pos_joueur = banquise.joueurs[joueur].position;
     T_vec vec_joueur = banquise.joueurs[joueur].vecteur;
@@ -815,7 +886,9 @@ void deplacer_joueur(T_banquise banquise, int joueur) {
     banquise.joueurs[joueur].position = new_pos;
     banquise.joueurs[joueur].vecteur = vec_null;
 }
-
+/* change les cases de glace qui sont proche de l'eau en des cases d'eau
+ * et fait aussi fondre des glacons
+*/
 void rechauffement_climatique(T_banquise banquise) {
     int **search = create_tab_chemin(banquise.taille);
     for (int i = 0; i < banquise.taille; i++) {
@@ -869,15 +942,14 @@ void rechauffement_climatique(T_banquise banquise) {
     }
 }
 
-/* il faut aussi rajouter ces tests
- * banquise.tab[new_pos.posx][new_pos.posy].objet != rocher
- * && banquise.tab[i-1][j].objet != marteau_manche
- */
+/* prend en charge les mouvements du glaçon
+ * Complexité en O(taille)
+*/
 void move_glacon(T_banquise banquise, int joueur) {
     T_pos pos = banquise.joueurs[joueur].position;
     T_vec vec = banquise.joueurs[joueur].vecteur;
     T_pos new_pos;
-    pos.posx = pos.posx + vec.dx; // Permet de résoudre pas mal de bugs, mais en créé un nouveau : le glacon saute la première case dans la trajectoire.
+    pos.posx = pos.posx + vec.dx;
     pos.posy = pos.posy + vec.dy;
     new_pos.posx = pos.posx + vec.dx;
     new_pos.posy = pos.posy + vec.dy;
@@ -906,9 +978,9 @@ void move_glacon(T_banquise banquise, int joueur) {
             vec.dy = -1 * vec.dy;
             new_pos.posx = pos.posx + vec.dx;
             new_pos.posy = pos.posy + vec.dy;
-        } else if (new_case.objet == rocher || new_case.objet == piege || new_case.objet == glacon) {
+        } else if (new_case.objet == rocher || new_case.objet == piege  || new_case.objet == glacon  ) {
             break;
-        } else if (new_case.objet == marteau_tete) {
+        } else if (new_case.objet == marteau_tete){
             T_pos temp = new_pos;
             temp.posx = temp.posx + vec.dx;
             temp.posy = temp.posy + vec.dy;
@@ -937,7 +1009,9 @@ void move_glacon(T_banquise banquise, int joueur) {
         }
     }
 }
-
+/* initialise les glaçons sur la glace
+ * Complexité:
+*/
 void init_glacon(T_case **tab, int taille) {
     int i, j;
 
@@ -950,7 +1024,9 @@ void init_glacon(T_case **tab, int taille) {
     }
 
 }
-
+/* initialise les ressorts sur la glace
+ *Complexité
+*/
 void init_ressort(T_case **tab, int taille) {
     int i, j;
     for (int l = 0; l < 2 + taille / 10; l++) {
@@ -962,7 +1038,9 @@ void init_ressort(T_case **tab, int taille) {
         tab[i][j].objet = resort;
     }
 }
-
+/* initialise les pieges sur la glace
+ *Complexité
+*/
 void init_piege(T_case **tab, int taille) {
     int i, j;
     for (int l = 0; l < 2 + taille / 10; l++) {
@@ -974,7 +1052,9 @@ void init_piege(T_case **tab, int taille) {
         tab[i][j].objet = piege;
     }
 }
-
+/* initialise les rochers
+ * Complexité :
+*/
 void init_rocher(T_case **tab, int taille) {
     int i, j;
     for (int l = 0; l < 2 + taille / 10; l++) {
@@ -986,7 +1066,9 @@ void init_rocher(T_case **tab, int taille) {
         tab[i][j].objet = rocher;
     }
 }
-
+/* initialise le marteau
+ * Complexité :
+*/
 void init_marteau(T_case **tab, int taille) {
     int i, j;
     for (int l = 0; l < 1 + taille / 10; l++) {
@@ -1004,49 +1086,9 @@ void init_marteau(T_case **tab, int taille) {
     }
 }
 
-void move_m_t(T_banquise banquise, T_vec *vec, T_pos new_pos, T_pos pos) {
-    T_pos p1;
-    int i, j;
-//new_pos : la position de la tete / p1: la position du manche /pos: la positin du glaçon
-//recherche de la position du manche
-    for (i = new_pos.posx - 1; i <= new_pos.posx + 1; i++) {
-        for (j = new_pos.posy - 1; j <= new_pos.posy + 1; j++) {
-            if (banquise.tab[i][j].objet == marteau_manche) {
-                p1.posx = i;
-                p1.posy = j;
-            }
-        }
-    }
-// on trouve le manche p1.
-    if (p1.posx == new_pos.posx)// on regarde si il est horizontale
-    {
-        if (vec->dx != 0) {
-            banquise.tab[new_pos.posx][new_pos.posy].objet = vide;// la pos actuelle de la tete est mise à vide
-            if (new_pos.posy > p1.posy) {// si la tete est à la droite du manche
-                banquise.tab[pos.posx][pos.posy -
-                                       1].objet = marteau_tete;// normalement c'est ici on se retouve la tete après 3/4 DE TOUR
-                vec->dx = 1;// bouge vers la droite
-                vec->dy = 0;
-            } else {
-                banquise.tab[pos.posx][pos.posy + 1].objet = marteau_tete;
-                vec->dx = -1;// vers la gauche
-                vec->dy = 0;
-            }
-        }
-    } else {// le cas ou le marteau est en position verticale
-        banquise.tab[new_pos.posx][new_pos.posy].objet = vide;
-        if (new_pos.posx > p1.posx) {
-            banquise.tab[pos.posx - 1][pos.posy].objet = marteau_tete;
-            vec->dx = 0;
-            vec->dy = -1;
-        } else {
-            banquise.tab[pos.posx + 1][new_pos.posy].objet = marteau_tete;
-            vec->dx = 0;
-            vec->dy = 1;
-        }
-    }
-}
-
+/* Permet d'avoir un affichage en couleur
+ * Complexité: Constante
+*/
 void Color(int couleurDuTexte, int couleurDeFond) {
     HANDLE H = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(H, couleurDeFond * 16 + couleurDuTexte);

@@ -3,7 +3,9 @@
 #include "objet.h"
 
 /* Code Louis */
-
+/*transforme le type énuméré Objet en char pour pivoir les afficher
+ *Complexité constante
+*/
 char T_objet_to_char(T_objet objet) {
     char result;
     switch (objet) {
