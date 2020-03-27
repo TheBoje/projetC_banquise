@@ -39,7 +39,7 @@ void fullscreen() {
 void menu_commandes() {
     print_banquise_game();
     printf("Les controles sont les suivants :\n"
-           "- les touches Z, Q, S, D  servent à  deplacer les  personnage\n"
+           "- les touches Z, Q, S, D  servent ï¿½  deplacer les  personnage\n"
            " Z : se deplacer vers le haut \n"
            " S : se deplacer vers le bas \n"
            " Q : se deplacer vers la gauche\n"
@@ -51,8 +51,8 @@ void menu_commandes() {
            "D = Depart\n"
            "\n"
            "* = Banquise ou bien la glace c'est les cases sur lesquels on se depace\n"
-           "  =  Le vide représente l'eau\n"
-           "1/2/3/4 = Les chiffres de un à quatre représente les Joueurs dans l'ordre \n"
+           "  =  Le vide reprï¿½sente l'eau\n"
+           "1/2/3/4 = Les chiffres de un ï¿½ quatre reprï¿½sente les Joueurs dans l'ordre \n"
            "\n"
            "M = Manche du marteau \n"
            "T = tete du marteau \n"
@@ -236,7 +236,6 @@ int main() {
         for (int i = 0; i < banquise.nombre_joueur; i++) {
             if(banquise.joueurs[i].estEnVie == 1) {
                 affiche_banquise(banquise);
-                debug_affichage(banquise);
                 gestion_joueur(banquise, i);
                 statusPartie = is_partie_finie(banquise);
                 if (statusPartie == false) {
