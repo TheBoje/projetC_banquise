@@ -501,13 +501,13 @@ void debug_case(T_banquise banquise, T_pos pos) {
 */
 bool is_partie_finie(T_banquise banquise) {
     T_pos arrive = position_arrive(banquise);
-    int compteur = 0;
+    int compteur = banquise.nombre_joueur;
     for (int i = 0; i < banquise.nombre_joueur; i++) {
         if (banquise.joueurs[i].estEnVie == 0) {
-            compteur += 1;
+            compteur -= 1;
         }
     }
-    if (banquise.tab[arrive.posx][arrive.posy].joueur == NULL && compteur == 0) {
+    if (banquise.tab[arrive.posx][arrive.posy].joueur == NULL && compteur != 0) {
         return true;
     } else {
         return false;
@@ -540,6 +540,10 @@ void gestion_joueur(T_banquise banquise, int ID_joueur) {
         if (banquise.joueurs[ID_joueur].piege == 1) {
             banquise.joueurs[ID_joueur].piege = 0;
         } else if (pos_j_valide(banquise, ID_joueur) == 1) {
+             if(banquise.tab[pos_joueur.posx + vec_joueur.dx][pos_joueur.posy + vec_joueur.dy].type_case==eau){
+                banquise.tab[pos_joueur.posx][pos_joueur.posy].joueur= NULL;
+                banquise.joueurs[ID_joueur].estEnVie=0;
+            }else{
             switch (banquise.tab[pos_joueur.posx + vec_joueur.dx][pos_joueur.posy + vec_joueur.dy].objet) {
                 case 0: // glacon
                     banquise.joueurs[ID_joueur].score.nb_glacon += 1;
@@ -564,7 +568,7 @@ void gestion_joueur(T_banquise banquise, int ID_joueur) {
                     deplacer_joueur(banquise, ID_joueur);
                     break;
             }
-        } else {
+       } } else {
             affiche_banquise(banquise);
             gestion_joueur(banquise, ID_joueur);
         }
@@ -854,7 +858,7 @@ int pos_j_valide(T_banquise banquise, int joueur) {
     int j = banquise.joueurs[joueur].position.posy + banquise.joueurs[joueur].vecteur.dy;
     if (i < 0 || i >= banquise.taille || j < 0 || j >= banquise.taille) {
         return 0;
-    } else if (banquise.tab[i][j].type_case == eau || banquise.tab[i][j].joueur != NULL) {
+    } else if (banquise.tab[i][j].joueur != NULL) {
         return 0;
     } else {
         return 1;
