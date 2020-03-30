@@ -1023,7 +1023,7 @@ void init_glacon(T_case **tab, int taille) {
         do {
             i = rand() % taille;
             j = rand() % taille;
-        } while (tab[i][j].type_case != 1 && tab[i][j].objet != vide && tab[i][j].joueur != NULL && tab[i][j].but != defaut);
+        } while (tab[i][j].type_case != 1 || tab[i][j].objet != vide || tab[i][j].joueur != NULL || tab[i][j].but != defaut);
         tab[i][j].objet = glacon;
     }
 
@@ -1037,7 +1037,7 @@ void init_ressort(T_case **tab, int taille) {
         do {
             i = rand() % taille;
             j = rand() % taille;
-        } while (tab[i][j].type_case != 1 && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+        } while (tab[i][j].type_case != 1 || tab[i][j].objet != vide || tab[i][j].joueur != NULL ||
                  tab[i][j].but != defaut);
         tab[i][j].objet = resort;
     }
@@ -1051,7 +1051,7 @@ void init_piege(T_case **tab, int taille) {
         do {
             i = rand() % taille;
             j = rand() % taille;
-        } while (tab[i][j].type_case != 1 && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+        } while (tab[i][j].type_case != 1 || tab[i][j].objet != vide || tab[i][j].joueur != NULL ||
                  tab[i][j].but != defaut);
         tab[i][j].objet = piege;
     }
@@ -1065,7 +1065,7 @@ void init_rocher(T_case **tab, int taille) {
         do {
             i = rand() % taille;
             j = rand() % taille;
-        } while (tab[i][j].type_case != 1 && tab[i][j].objet != vide && tab[i][j].joueur != NULL &&
+        } while (tab[i][j].type_case != 1 || tab[i][j].objet != vide || tab[i][j].joueur != NULL ||
                  tab[i][j].but != defaut);
         tab[i][j].objet = rocher;
     }
@@ -1079,11 +1079,11 @@ void init_marteau(T_case **tab, int taille) {
         do {
             i = rand() % (taille - 3) + 1;
             j = rand() % (taille - 3) + 1;
-        } while (tab[i][j].type_case != 1 && tab[i][j].objet != 6 && tab[i][j].joueur != NULL && tab[i][j].but != 2
-                 && tab[i + 1][j].type_case != 1 && tab[i + 1][j].objet != 6 && tab[i + 1][j].joueur != NULL && tab[i + 1][j].but != 2
-                 && tab[i - 1][j].type_case != 1 && tab[i - 1][j].objet != 6 && tab[i - 1][j].joueur != NULL && tab[i - 1][j].but != 2
-                 && tab[i][j + 1].type_case != 1 && tab[i][j + 1].objet != 6 && tab[i][j + 1].joueur != NULL && tab[i][j + 1].but != 2
-                 && tab[i][j - 1].type_case != 1 && tab[i][j - 1].objet != 6 && tab[i][j - 1].joueur != NULL && tab[i][j - 1].but != 2
+        } while (tab[i][j].type_case != 1 || tab[i][j].objet != 6 || tab[i][j].joueur != NULL || tab[i][j].but != 2
+                 || tab[i + 1][j].type_case != 1 || tab[i + 1][j].objet != 6 || tab[i + 1][j].joueur != NULL || tab[i + 1][j].but != 2
+                 || tab[i - 1][j].type_case != 1 || tab[i - 1][j].objet != 6 || tab[i - 1][j].joueur != NULL || tab[i - 1][j].but != 2
+                 || tab[i][j + 1].type_case != 1 || tab[i][j + 1].objet != 6 || tab[i][j + 1].joueur != NULL || tab[i][j + 1].but != 2
+                 || tab[i][j - 1].type_case != 1 || tab[i][j - 1].objet != 6 || tab[i][j - 1].joueur != NULL || tab[i][j - 1].but != 2
                 );
         tab[i][j].objet = marteau_manche;
         tab[i][j + 1].objet = marteau_tete;
