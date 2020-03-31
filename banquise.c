@@ -71,6 +71,7 @@ void print_banquise_game() {
            "                      |_|                                              \n"
            "\n");
     Color(15, 0);
+
 }
 /* Affiche le jeu prends la banquise et l'affiche case par case selon le contenu
 * Complexité : O(taille*taille) -> depends de la taille de la banquise
@@ -87,8 +88,19 @@ void affiche_banquise(T_banquise banquise) {
         for (j = 0; j < banquise.taille; j++) {     // et selon y
 
             if (banquise.tab[i][j].joueur != NULL) {
+                if( banquise.tab[i][j].joueur->id == 0){
                 Color(14, 0);
                 fprintf(stdout, " %d ", banquise.tab[i][j].joueur->id + 1);
+                } else if( banquise.tab[i][j].joueur->id == 1){
+                Color(13, 0);
+                fprintf(stdout, " %d ", banquise.tab[i][j].joueur->id + 1);
+                } else if( banquise.tab[i][j].joueur->id == 2){
+                Color(10, 0);
+                fprintf(stdout, " %d ", banquise.tab[i][j].joueur->id + 1);
+                } else if( banquise.tab[i][j].joueur->id == 3){
+                Color(11, 0);
+                fprintf(stdout, " %d ", banquise.tab[i][j].joueur->id + 1);
+                }
             } else if (banquise.tab[i][j].but != defaut) {
                 Color(12, 0);
                 fprintf(stdout, " %c ", T_but_to_char(banquise.tab[i][j].but));
@@ -96,7 +108,18 @@ void affiche_banquise(T_banquise banquise) {
                  if(banquise.tab[i][j].objet == piege){
                    Color(3,0);
                 fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
-                 } else {
+                 }
+                 else if(banquise.tab[i][j].objet == marteau_manche || banquise.tab[i][j].objet == marteau_tete ){
+                   Color(2,0);
+                fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
+                 }else if(banquise.tab[i][j].objet == rocher ){
+                   Color(4,0);
+                fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
+                 }else if(banquise.tab[i][j].objet == resort){
+                   Color(1,0);
+                fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
+                 }
+                 else {
                 Color(8,0);
                 fprintf(stdout, " %c ", T_objet_to_char(banquise.tab[i][j].objet));
                  }
