@@ -14,21 +14,29 @@ T_init_jeu init_jeu_data; // variable globale qui fait tourner le jeu
 */
 void menu_exit(T_banquise banquise) {
     print_banquise_game();
+    Color(11,0);
+    fprintf(stdout, "\n\n la partie est fini ! Qui a gagne ? \n\n");
     int *classement_joueur = classer_joueur(banquise);
     T_pos arrive = position_arrive(banquise);
     for (int i = 0; i < banquise.nombre_joueur; i++) {
         if (i == 0 && banquise.tab[arrive.posx][arrive.posy].joueur != NULL) {
-            fprintf(stdout, "Le gagnant est le joueur %s avec un score de %d ! Felicitations !\n", banquise.joueurs[classement_joueur[i]].nom, calculer_score(banquise, classement_joueur[i]));
+
+            fprintf(stdout, "\n\n Bravo ! Le gagnant est %s avec un score de %d ! Felicitations !\n\n\n", banquise.joueurs[classement_joueur[i]].nom, calculer_score(banquise, classement_joueur[i]));
         } else {
-            fprintf(stdout, "Le joueur %s a termine %d eme avec un score de %d\n", banquise.joueurs[classement_joueur[i]].nom, i + 1, calculer_score(banquise, classement_joueur[i]));
+            fprintf(stdout, " Tu n'as pas réussi ton aventure !  %s termine %d eme avec un score de %d\n", banquise.joueurs[classement_joueur[i]].nom, i + 1, calculer_score(banquise, classement_joueur[i]));
         }
     }
+    free(banquise.tab);
+    free(banquise.joueurs);
+    Color(13,0);
+    fprintf(stdout, "\n\n\n********************************************************************************************\n");
+    fprintf(stdout, " \n\n Pour recommencer une nouvelle aventure appuyez sur a, sinon appuyez sur q ! \n\n ");
     char c;
     fflush(stdin);
     scanf("%c", &c);
-    if (c != 'd' && c != 's' && c != 'q' && c != 'z') {
-        exit(1);
-    }
+    if (c == 'a' ) {
+        start_game_banquise();
+    }else exit(1);
 }
 
 /* ajuster la taille de l'affichage
@@ -239,11 +247,9 @@ T_banquise init_jeu() {
     affiche_banquise(banquise);
     return banquise;
 }
+void start_game_banquise(){
 
-int main() {
-    /* Code Louis */
-    fullscreen();
-    T_banquise banquise = init_jeu();
+ T_banquise banquise = init_jeu();
     while (chemin_exist(banquise, position_depart(banquise)) == 0) {
         banquise.tab = create_tab(init_jeu_data.mapTaille);
     }
@@ -264,7 +270,12 @@ int main() {
         banquise.tours += 1;
     }
     menu_exit(banquise);
-    free(banquise.tab);
-    free(banquise.joueurs);
+
+}
+
+int main() {
+    /* Code Louis */
+    fullscreen();
+   start_game_banquise();
     return 0;
 }
