@@ -16,13 +16,12 @@ void menu_exit(T_banquise banquise) {
     print_banquise_game();
     int *classement_joueur = classer_joueur(banquise);
     T_pos arrive = position_arrive(banquise);
-    for (int i = 0; i < banquise.nombre_joueur; i++){
-       if (i == 0 && banquise.tab[arrive.posx][arrive.posy].joueur != NULL){
-           fprintf(stdout, "Le gagnant est le joueur %s avec un score de %d ! Felicitations !\n", banquise.joueurs[classement_joueur[i]].nom, calculer_score(banquise, classement_joueur[i]));
-       }
-       else {
-           fprintf(stdout, "Le joueur %s a termine %d eme avec un score de %d\n", banquise.joueurs[classement_joueur[i]].nom, i + 1, calculer_score(banquise, classement_joueur[i]));
-       }
+    for (int i = 0; i < banquise.nombre_joueur; i++) {
+        if (i == 0 && banquise.tab[arrive.posx][arrive.posy].joueur != NULL) {
+            fprintf(stdout, "Le gagnant est le joueur %s avec un score de %d ! Felicitations !\n", banquise.joueurs[classement_joueur[i]].nom, calculer_score(banquise, classement_joueur[i]));
+        } else {
+            fprintf(stdout, "Le joueur %s a termine %d eme avec un score de %d\n", banquise.joueurs[classement_joueur[i]].nom, i + 1, calculer_score(banquise, classement_joueur[i]));
+        }
     }
     char c;
     fflush(stdin);
@@ -31,6 +30,7 @@ void menu_exit(T_banquise banquise) {
         exit(1);
     }
 }
+
 /* ajuster la taille de l'affichage
 */
 void fullscreen() {
@@ -39,6 +39,7 @@ void fullscreen() {
     keybd_event(VK_RETURN, 0x1c, KEYEVENTF_KEYUP, 0);
     keybd_event(VK_MENU, 0x38, KEYEVENTF_KEYUP, 0);
 }
+
 /* prend en charge l'affichage des commandes
 */
 void menu_commandes() {
@@ -74,6 +75,7 @@ void menu_commandes() {
         init_jeu_data.statusMenu = 3;
     }
 }
+
 /* prend en charge l'affichage des regles du jeu
 */
 void menu_regles() {
@@ -95,6 +97,7 @@ void menu_regles() {
         init_jeu_data.statusMenu = 2;
     }
 }
+
 /* sert � integrer les parametres du jeu
 */
 void menu_parametre() {
@@ -141,6 +144,7 @@ void menu_parametre() {
     init_jeu_data.statusMenu = 1;
     init_jeu_data.param = 1;
 }
+
 /* affiche le menu et les dif�rentes options possibles en debut de jeu
 */
 void init_jeu_select_menu() {
@@ -179,6 +183,7 @@ void init_jeu_select_menu() {
     }
     init_jeu_menu_manager();
 }
+
 /* affecte � chaque valeur de statusMenu une fontion du menu
 */
 void init_jeu_menu_manager() {
@@ -205,6 +210,7 @@ void init_jeu_menu_manager() {
             break;
     }
 }
+
 /* Lance le menu du jeu
 */
 void init_jeu_aux() {
@@ -222,6 +228,7 @@ void init_jeu_aux() {
     }
     init_jeu_select_menu();
 }
+
 /* initialise la partie
 */
 T_banquise init_jeu() {
@@ -244,7 +251,7 @@ int main() {
     // Boucle principale de jeu
     while (statusPartie) {
         for (int i = 0; i < banquise.nombre_joueur; i++) {
-            if(banquise.joueurs[i].estEnVie == 1) {
+            if (banquise.joueurs[i].estEnVie == 1) {
                 affiche_banquise(banquise);
                 gestion_joueur(banquise, i);
                 statusPartie = is_partie_finie(banquise);

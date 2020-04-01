@@ -7,11 +7,11 @@
 /* ---------- Types Banquise ---------- */
 /*
     Definition des differents objets :
-    - T_type_case (enum)
-    - T_but (enum)
-    - T_taille (int tailleX, int tailleY)
-    - T_case (T_type_case type_case, T_but but, T_objet objet, T_joueur* joueur, T_vec vecteur)
-    - T_banquise (T_case **tab, int taille, int nombre_joueur)
+    - T_type_case
+    - T_but
+    - T_taille
+    - T_case
+    - T_banquise
 */
 
 
@@ -39,7 +39,7 @@ typedef struct // Definition du T_case, regroupe toutes les proprietes d'une cas
 } T_case;
 
 
-typedef struct // Definition du T_banquise, contient la matrice de cases, la taille de la matrice et le nombre de joueur
+typedef struct // Definition du T_banquise
 {
     T_case **tab;
     int taille;
