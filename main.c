@@ -55,15 +55,15 @@ void menu_commandes() {
            "D = Depart\n"
            "\n"
            "* = Banquise ou bien la glace c'est les cases sur lesquels on se depace\n"
-           "  =  Le vide reprï¿½sente l'eau\n"
-           "1/2/3/4 = Les chiffres de un ï¿½ quatre reprï¿½sente les Joueurs dans l'ordre \n"
+           "  =  Le vide represente l'eau\n"
+           "1/2/3/4 = Les chiffres de un a quatre represente les Joueurs dans l'ordre \n"
            "\n"
            "M = Manche du marteau \n"
            "T = tete du marteau \n"
            "G = Glacon \n"
            "X = Ressort\n"
            "R = Rocher \n"
-           "Attention il y a des Pieges invisibles un peu partout sur la banquise "); //TODO Completer
+           "Attention il y a des Pieges invisibles un peu partout sur la banquise ");
     char c = ' ';
     fflush(stdin);
     scanf("%c", &c);
@@ -77,15 +77,14 @@ void menu_commandes() {
 */
 void menu_regles() {
     print_banquise_game();
-    printf("Des regles vraiment interessantes et claires\n"
-           "Les joueurs initialises sur la banquise vont se deplacer tour atour \n"
-           "A chaque tour un joueurs fait un mouvement on utilisant les touches defini dans la section commandes \n"
-           "Une partie prends fin des qu'un joueur arrivent a la case d'arrivee \n"
-           "Si un joueur se deplace sur une case piege il sera bloque pendant un tour\n"
-           "Un joueur peut faire bouger un glacon si il le souhaite \n"
-           "Un glacon en mouvement peut agrandir la banquise ou bien tuer un joueurs\n"
-           "Un ressot inverse le mouvement d'un glacon"
-           "Un marteau peut changer la trajectoire du glacon en mouvement de 90 degres"); //TODO Completer
+    printf("- Les joueurs initialises sur la banquise se dÃ©placent chacun leur tour\n"
+           "- A chaque tour un joueurs fait un mouvement on utilisant les touches defini dans la section commandes\n"
+           "- Une partie prends fin des qu'un joueur arrivent a la case d'arrivee ou que plus aucun joueur n'est en vie\n"
+           "- Si un joueur se deplace sur une case piege il sera bloque pendant un tour\n"
+           "- Un joueur peut faire bouger un glacon en avanÃ§ant vers lui \n"
+           "- Un glacon en mouvement peux agrandir la banquise ou tuer un joueurs\n"
+           "- Un ressot inverse le mouvement d'un glacon"
+           "- Un marteau peut changer la trajectoire du glacon en mouvement de 90 degres"); //TODO Completer
     char c = ' ';
     fflush(stdin);
     scanf("%c", &c);
@@ -95,7 +94,7 @@ void menu_regles() {
         init_jeu_data.statusMenu = 2;
     }
 }
-/* sert à integrer les parametres du jeu
+/* sert ï¿½ integrer les parametres du jeu
 */
 void menu_parametre() {
     print_banquise_game();
@@ -141,7 +140,7 @@ void menu_parametre() {
     init_jeu_data.statusMenu = 1;
     init_jeu_data.param = 1;
 }
-/* affiche le menu et les diférentes options possibles en debut de jeu
+/* affiche le menu et les difï¿½rentes options possibles en debut de jeu
 */
 void init_jeu_select_menu() {
     print_banquise_game();
@@ -179,7 +178,7 @@ void init_jeu_select_menu() {
     }
     init_jeu_menu_manager();
 }
-/* affecte à chaque valeur de statusMenu une fontion du menu
+/* affecte ï¿½ chaque valeur de statusMenu une fontion du menu
 */
 void init_jeu_menu_manager() {
     switch (init_jeu_data.statusMenu) {
