@@ -15,8 +15,9 @@ T_init_jeu init_jeu_data; // variable globale qui fait tourner le jeu
 void menu_exit(T_banquise banquise) {
     print_banquise_game();
     int *classement_joueur = classer_joueur(banquise);
+    T_pos arrive = position_arrive(banquise);
     for (int i = 0; i < banquise.nombre_joueur; i++){
-       if (i == 0){
+       if (i == 0 && banquise.tab[arrive.posx][arrive.posy].joueur != NULL){
            fprintf(stdout, "Le gagnant est le joueur %s avec un score de %d ! Felicitations !\n", banquise.joueurs[classement_joueur[i]].nom, calculer_score(banquise, classement_joueur[i]));
        }
        else {
